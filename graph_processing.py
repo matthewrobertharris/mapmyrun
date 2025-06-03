@@ -125,10 +125,15 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
     """
     start_time = time.time()
     logging.info(f"Starting edge cover calculation with {len(G.edges())} edges")
+    logging.info(f"Start node: {start_node}")
     
     # Verify start node is in the graph
     if start_node not in G:
         raise ValueError(f"Start node {start_node} not found in the graph")
+    
+    # Debug edges connected to start node
+    start_node_edges = list(G.edges(start_node, data=True))
+    logging.info(f"Start node has {len(start_node_edges)} direct edges")
     
     # Verify start node is in the largest component
     largest_cc = max(nx.connected_components(G), key=len)
@@ -151,13 +156,62 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
     unreachable_edges_info = []
     
     logging.info("Pre-computing edge data and accessibility...")
-    for edge in G.edges():
-        edge_data = get_edge_data(G, edge[0], edge[1])
-        if edge_data is None or 'length' not in edge_data:
+    
+    # First process edges connected to start node
+    for u, v, data in start_node_edges:
+        edge = tuple(sorted([u, v]))
+        edge_data_cache[edge] = data
+        edge_length = data.get('length', 0)
+        
+        # For edges connected to start node, we only need to go to the other end and back
+        other_node = v if u == start_node else u
+        try:
+            # If the other node is also the start node (self-loop), distance is just edge length
+            if other_node == start_node:
+                min_cycle_dist = edge_length
+                logging.info(f"Start node self-loop edge {edge}:")
+                logging.info(f"  Edge length: {edge_length:.1f}m")
+                logging.info(f"  Total cycle distance: {min_cycle_dist:.1f}m")
+            else:
+                # Get path from other node back to start
+                return_path = path_dict.get((other_node, start_node))
+                if return_path is None:
+                    logging.error(f"No return path found from {other_node} to start node")
+                    edge_accessibility[edge] = float('inf')
+                    continue
+                    
+                return_dist = length_dict.get((other_node, start_node), float('inf'))
+                min_cycle_dist = edge_length + return_dist
+                
+                logging.info(f"Start node edge {edge}:")
+                logging.info(f"  Edge length: {edge_length:.1f}m")
+                logging.info(f"  Return distance: {return_dist:.1f}m")
+                logging.info(f"  Total cycle distance: {min_cycle_dist:.1f}m")
+            
+            edge_accessibility[edge] = min_cycle_dist
+            
+            if min_cycle_dist == float('inf'):
+                unreachable_edges_info.append({
+                    'edge': edge,
+                    'edge_length': edge_length,
+                    'return_distance': return_dist if other_node != start_node else 0,
+                    'street_name': data.get('name', 'Unnamed Road')
+                })
+        except Exception as e:
+            logging.error(f"Error processing start node edge {edge}: {str(e)}")
+            edge_accessibility[edge] = float('inf')
+    
+    # Then process remaining edges
+    for u, v, data in G.edges(data=True):
+        if u == start_node or v == start_node:
+            continue  # Skip start node edges as they're already processed
+            
+        edge = tuple(sorted([u, v]))
+        if edge in edge_data_cache:
             continue
             
-        edge_data_cache[edge] = edge_data
-        edge_length = edge_data['length']
+        edge_data_cache[edge] = data
+        edge_length = data.get('length', 0)
         
         try:
             # Calculate minimum cycle distance for this edge using pre-computed paths
@@ -181,7 +235,7 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
                     'dist_to_end': dist_to_end,
                     'dist_from_start': dist_from_start,
                     'edge_length': edge_length,
-                    'street_name': edge_data.get('name', 'Unnamed Road')
+                    'street_name': data.get('name', 'Unnamed Road')
                 })
             else:
                 # Log some sample accessible edges
@@ -194,28 +248,44 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
     edges_to_cover = []
     unreachable_edges = []
     
-    for edge, min_dist in edge_accessibility.items():
+    # Log start node edges accessibility
+    logging.info("\nStart node edges accessibility:")
+    for u, v, data in start_node_edges:
+        edge = tuple(sorted([u, v]))
+        min_dist = edge_accessibility.get(edge, float('inf'))
+        logging.info(f"Edge {edge}: min_cycle_dist = {min_dist:.1f}m")
         if min_dist <= max_distance:
-            priority = edge_data_cache[edge].get('priority', False)
+            priority = data.get('priority', False)
             edges_to_cover.append((edge, priority))
         else:
             unreachable_edges.append((edge, min_dist))
     
+    # Process remaining edges
+    for edge, min_dist in edge_accessibility.items():
+        if edge not in dict((tuple(sorted([u, v])), data) for u, v, data in start_node_edges):
+            if min_dist <= max_distance:
+                priority = edge_data_cache[edge].get('priority', False)
+                edges_to_cover.append((edge, priority))
+            else:
+                unreachable_edges.append((edge, min_dist))
+    
     total_edges = len(edges_to_cover)
     if unreachable_edges:
         logging.warning(f"Found {len(unreachable_edges)} unreachable or too distant edges")
-        for edge, dist in unreachable_edges[:5]:
+        for edge, dist in unreachable_edges[:10]:
             if dist == float('inf'):
                 edge_info = next((info for info in unreachable_edges_info if info['edge'] == edge), None)
                 if edge_info:
                     logging.warning(f"Edge {edge} ({edge_info['street_name']}) is not reachable from start node:")
                     logging.warning(f"  Distance to start: {edge_info['dist_to_start']:.1f}m")
+                    logging.warning(f"  Distance from start: {edge_info['dist_from_start']:.1f}m")
+                    logging.warning(f"  Distance to end: {edge_info['dist_to_end']:.1f}m")
                     logging.warning(f"  Distance from end: {edge_info['dist_from_end']:.1f}m")
                     logging.warning(f"  Edge length: {edge_info['edge_length']:.1f}m")
             else:
                 logging.warning(f"Edge {edge} requires minimum cycle distance of {dist:.1f}m (exceeds limit of {max_distance}m)")
-        if len(unreachable_edges) > 5:
-            logging.warning(f"... and {len(unreachable_edges) - 5} more unreachable edges")
+        if len(unreachable_edges) > 10:
+            logging.warning(f"... and {len(unreachable_edges) - 10} more unreachable edges")
     
     logging.info(f"Proceeding with {total_edges} accessible edges out of {len(G.edges())} total edges")
     
@@ -238,29 +308,38 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
         new_distance = current_distance
         
         for i in range(len(path) - 1):
-            edge_data = edge_data_cache.get((path[i], path[i+1]))
+            # Try both directions for edge lookup since edges are stored as sorted tuples
+            edge_tuple = tuple(sorted([path[i], path[i+1]]))
+            edge_data = edge_data_cache.get(edge_tuple)
+            
             if edge_data is None:
                 try:
                     # Use pre-computed path
                     intermediate_path = path_dict.get((path[i], path[i+1]))
                     if intermediate_path is None:
+                        logging.error(f"No intermediate path found between {path[i]} and {path[i+1]}")
                         return None, None
                         
                     for j in range(1, len(intermediate_path)-1):
                         new_cycle.append(intermediate_path[j])
-                        inter_edge_data = edge_data_cache.get((intermediate_path[j-1], intermediate_path[j]))
+                        inter_edge_tuple = tuple(sorted([intermediate_path[j-1], intermediate_path[j]]))
+                        inter_edge_data = edge_data_cache.get(inter_edge_tuple)
                         if inter_edge_data is None:
+                            logging.error(f"No edge data found for intermediate edge {inter_edge_tuple}")
                             return None, None
                         new_distance += inter_edge_data['length']
                         if new_distance > max_distance:
+                            logging.error(f"Intermediate path would exceed max distance: {new_distance} > {max_distance}")
                             return None, None
                 except KeyError:
+                    logging.error(f"KeyError while processing intermediate path between {path[i]} and {path[i+1]}")
                     return None, None
             
             new_cycle.append(path[i+1])
             if edge_data:
                 new_distance += edge_data['length']
                 if new_distance > max_distance:
+                    logging.error(f"Adding edge would exceed max distance: {new_distance} > {max_distance}")
                     return None, None
         
         return new_cycle, new_distance
@@ -305,20 +384,24 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
         if priority_edges:
             for edge, _ in priority_edges:
                 if current_node in edge:
+                    # Current node is directly connected to this edge
                     edge_data = edge_data_cache[edge]
                     edge_distance = edge_data['length']
                     
                     next_node = edge[1] if current_node == edge[0] else edge[0]
-                    try:
+                    
+                    # If next_node is the start_node, we don't need a return path
+                    if next_node == start_node:
+                        return_distance = 0
+                    else:
                         return_distance = length_dict.get((next_node, start_node), float('inf'))
-                        total_distance = current_distance + edge_distance + return_distance
-                        
-                        if total_distance <= max_distance:
-                            next_edge = edge
-                            best_path = [current_node, next_node]
-                            break
-                    except KeyError:
-                        continue
+                    
+                    total_distance = current_distance + edge_distance + return_distance
+                    
+                    if total_distance <= max_distance:
+                        next_edge = edge
+                        best_path = [current_node, next_node]
+                        break
                 else:
                     try:
                         path1 = path_dict.get((current_node, edge[0]))
@@ -332,8 +415,16 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
                         
                         edge_distance = edge_data_cache[edge]['length']
                         
-                        return_dist1 = length_dict.get((edge[1], start_node), float('inf'))
-                        return_dist2 = length_dict.get((edge[0], start_node), float('inf'))
+                        # Handle return distances properly for start node
+                        if edge[1] == start_node:
+                            return_dist1 = 0
+                        else:
+                            return_dist1 = length_dict.get((edge[1], start_node), float('inf'))
+                            
+                        if edge[0] == start_node:
+                            return_dist2 = 0
+                        else:
+                            return_dist2 = length_dict.get((edge[0], start_node), float('inf'))
                         
                         total_dist1 = current_distance + dist1 + edge_distance + return_dist1
                         total_dist2 = current_distance + dist2 + edge_distance + return_dist2
@@ -353,20 +444,24 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
         if not next_edge and not stop_after_priority:
             for edge, _ in edges_to_cover:
                 if current_node in edge:
+                    # Current node is directly connected to this edge
                     edge_data = edge_data_cache[edge]
                     edge_distance = edge_data['length']
                     
                     next_node = edge[1] if current_node == edge[0] else edge[0]
-                    try:
+                    
+                    # If next_node is the start_node, we don't need a return path
+                    if next_node == start_node:
+                        return_distance = 0
+                    else:
                         return_distance = length_dict.get((next_node, start_node), float('inf'))
-                        total_distance = current_distance + edge_distance + return_distance
-                        
-                        if total_distance <= max_distance:
-                            next_edge = edge
-                            best_path = [current_node, next_node]
-                            break
-                    except KeyError:
-                        continue
+                    
+                    total_distance = current_distance + edge_distance + return_distance
+                    
+                    if total_distance <= max_distance:
+                        next_edge = edge
+                        best_path = [current_node, next_node]
+                        break
                 else:
                     try:
                         path1 = path_dict.get((current_node, edge[0]))
@@ -380,8 +475,16 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
                         
                         edge_distance = edge_data_cache[edge]['length']
                         
-                        return_dist1 = length_dict.get((edge[1], start_node), float('inf'))
-                        return_dist2 = length_dict.get((edge[0], start_node), float('inf'))
+                        # Handle return distances properly for start node
+                        if edge[1] == start_node:
+                            return_dist1 = 0
+                        else:
+                            return_dist1 = length_dict.get((edge[1], start_node), float('inf'))
+                            
+                        if edge[0] == start_node:
+                            return_dist2 = 0
+                        else:
+                            return_dist2 = length_dict.get((edge[0], start_node), float('inf'))
                         
                         total_dist1 = current_distance + dist1 + edge_distance + return_dist1
                         total_dist2 = current_distance + dist2 + edge_distance + return_dist2
@@ -402,6 +505,71 @@ def calculate_edge_cover(G, start_node, max_distance, stop_after_priority=False)
                 new_cycle, new_distance = add_path_to_cycle(best_path, current_cycle.copy(), current_distance)
                 if new_cycle is None:
                     logging.error(f"Failed to add path for edge {next_edge}")
+                    
+                    # Debug the failing edge
+                    debug_edge = next_edge
+                    logging.error(f"Debugging failed edge {debug_edge}:")
+                    
+                    # Check if edge exists in cache and accessibility
+                    if debug_edge in edge_data_cache:
+                        edge_data = edge_data_cache[debug_edge]
+                        logging.error(f"  Edge data: {edge_data}")
+                        logging.error(f"  Edge length: {edge_data.get('length', 'unknown')}")
+                    else:
+                        logging.error(f"  Edge not found in edge_data_cache")
+                    
+                    if debug_edge in edge_accessibility:
+                        logging.error(f"  Edge accessibility: {edge_accessibility[debug_edge]}")
+                    else:
+                        logging.error(f"  Edge not found in edge_accessibility")
+                    
+                    # Check current cycle state
+                    current_node = current_cycle[-1] if current_cycle else None
+                    logging.error(f"  Current node: {current_node}")
+                    logging.error(f"  Current cycle length: {len(current_cycle)}")
+                    logging.error(f"  Current distance: {current_distance}")
+                    
+                    # Check if current node is connected to the edge
+                    if current_node:
+                        if current_node in debug_edge:
+                            logging.error(f"  Current node {current_node} is directly connected to edge")
+                        else:
+                            # Check paths to both ends of the edge
+                            path_to_u = path_dict.get((current_node, debug_edge[0]))
+                            path_to_v = path_dict.get((current_node, debug_edge[1]))
+                            dist_to_u = length_dict.get((current_node, debug_edge[0]), 'unknown')
+                            dist_to_v = length_dict.get((current_node, debug_edge[1]), 'unknown')
+                            
+                            logging.error(f"  Path to {debug_edge[0]}: {path_to_u is not None} (dist: {dist_to_u})")
+                            logging.error(f"  Path to {debug_edge[1]}: {path_to_v is not None} (dist: {dist_to_v})")
+                    
+                    # Check return paths from edge to start
+                    return_u = length_dict.get((debug_edge[0], start_node), 'unknown')
+                    return_v = length_dict.get((debug_edge[1], start_node), 'unknown')
+                    logging.error(f"  Return path from {debug_edge[0]} to start: {return_u}")
+                    logging.error(f"  Return path from {debug_edge[1]} to start: {return_v}")
+                    
+                    # Calculate what the total distance would be
+                    if debug_edge in edge_data_cache:
+                        edge_len = edge_data_cache[debug_edge].get('length', 0)
+                        if current_node and current_node in debug_edge:
+                            other_node = debug_edge[1] if current_node == debug_edge[0] else debug_edge[0]
+                            return_dist = length_dict.get((other_node, start_node), float('inf'))
+                            total_would_be = current_distance + edge_len + return_dist
+                            logging.error(f"  Total distance would be: {total_would_be} (max: {max_distance})")
+                        else:
+                            # Calculate both directions
+                            dist1 = length_dict.get((current_node, debug_edge[0]), float('inf'))
+                            return1 = length_dict.get((debug_edge[1], start_node), float('inf'))
+                            total1 = current_distance + dist1 + edge_len + return1
+                            
+                            dist2 = length_dict.get((current_node, debug_edge[1]), float('inf'))
+                            return2 = length_dict.get((debug_edge[0], start_node), float('inf'))
+                            total2 = current_distance + dist2 + edge_len + return2
+                            
+                            logging.error(f"  Total distance option 1: {total1} (max: {max_distance})")
+                            logging.error(f"  Total distance option 2: {total2} (max: {max_distance})")
+                    
                     edges_to_cover = [(e, p) for e, p in edges_to_cover if e != next_edge]
                     continue
                     
