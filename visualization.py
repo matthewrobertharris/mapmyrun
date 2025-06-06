@@ -89,10 +89,18 @@ def visualize_solution(G, cycles, center_point, metrics, output_file='route_map.
         for i in range(len(path)-1):
             try:
                 edge = tuple(sorted([path[i], path[i+1]]))
-                edge_data = G[path[i]][path[i+1]][0] if path[i] in G and path[i+1] in G[path[i]] else None
-                if edge_data is None:
-                    logging.error(f"Edge not found between nodes {path[i]} and {path[i+1]}")
+                
+                # Check if both nodes exist in the graph
+                if path[i] not in G or path[i+1] not in G:
+                    logging.warning(f"Node {path[i]} or {path[i+1]} not found in graph for cycle {cycle_num + 1}")
                     continue
+                
+                # Check if edge exists between the nodes
+                if path[i+1] not in G[path[i]]:
+                    #logging.warning(f"Edge not found between nodes {path[i]} and {path[i+1]} in cycle {cycle_num + 1}")
+                    continue
+                
+                edge_data = G[path[i]][path[i+1]][0]
                 
                 if 'geometry' in edge_data:
                     line_coords = [(coord[1], coord[0]) for coord in edge_data['geometry'].coords]

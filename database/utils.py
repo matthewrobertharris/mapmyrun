@@ -108,13 +108,16 @@ def add_route(db, location_id, name, description, points, distance=None, elevati
     db.commit()
     return route
 
-def add_road_segment(db, osm_id, name, road_type, coordinates, length=None, classification=None):
+def add_road_segment(db, osm_id, segment_id, node_u, node_v, name, road_type, coordinates, length=None, classification=None):
     """
     Add a new road segment to the database
     
     Args:
         db: SQLAlchemy session
-        osm_id: OpenStreetMap ID
+        osm_id: Original OpenStreetMap ID
+        segment_id: Unique segment identifier (osm_id_node_u_node_v)
+        node_u: Start node ID
+        node_v: End node ID
         name: Street name
         road_type: Type of road
         coordinates: List of (lon, lat) tuples
@@ -125,6 +128,9 @@ def add_road_segment(db, osm_id, name, road_type, coordinates, length=None, clas
     
     segment = RoadSegment(
         osm_id=osm_id,
+        segment_id=segment_id,
+        node_u=node_u,
+        node_v=node_v,
         name=name,
         road_type=road_type,
         length=length,
@@ -135,7 +141,7 @@ def add_road_segment(db, osm_id, name, road_type, coordinates, length=None, clas
     db.commit()
     return segment
 
-def create_route_with_segments(db, location_id, name, description, segment_osm_ids, segment_directions):
+def create_route_with_segments(db, location_id, name, description, segment_ids, segment_directions):
     """
     Create a new route from existing road segments
     
@@ -144,7 +150,7 @@ def create_route_with_segments(db, location_id, name, description, segment_osm_i
         location_id: ID of the location this route belongs to
         name: Route name
         description: Route description
-        segment_osm_ids: List of road segment OSM IDs in order
+        segment_ids: List of road segment IDs in order (using segment_id field)
         segment_directions: List of booleans indicating direction for each segment (True=forward, False=reverse)
     """
     # Create the route
@@ -157,18 +163,22 @@ def create_route_with_segments(db, location_id, name, description, segment_osm_i
     db.flush()  # Get route ID
     
     # Add segments to route with order and direction
-    for order, (segment_osm_id, direction) in enumerate(zip(segment_osm_ids, segment_directions)):
+    for order, (segment_id, direction) in enumerate(zip(segment_ids, segment_directions)):
         stmt = insert(route_segments).values(
             route_id=route.id,
-            segment_osm_id=segment_osm_id,
+            segment_id=segment_id,
             segment_order=order,
             direction=direction
         )
         db.execute(stmt)
     
-    # Calculate total distance and update route
-    segments = db.query(RoadSegment).filter(RoadSegment.osm_id.in_(segment_osm_ids)).all()
-    total_distance = sum(segment.length for segment in segments)
+    # Calculate total distance properly handling repeated segments
+    total_distance = 0
+    for segment_id in segment_ids:
+        segment = db.query(RoadSegment).filter(RoadSegment.segment_id == segment_id).first()
+        if segment and segment.length:
+            total_distance += segment.length
+    
     route.distance = total_distance
     
     db.commit()
@@ -408,7 +418,7 @@ def sync_user_road_segments(db, user_id):
             db.query(UserRoadSegment)
             .filter(
                 UserRoadSegment.user_id == user_id,
-                UserRoadSegment.osm_id == segment.osm_id
+                UserRoadSegment.segment_id == segment.segment_id
             )
             .first()
         )
@@ -416,7 +426,7 @@ def sync_user_road_segments(db, user_id):
         if not user_segment:
             user_segment = UserRoadSegment(
                 user_id=user_id,
-                osm_id=segment.osm_id,
+                segment_id=segment.segment_id,
                 name=segment.name,
                 road_type=segment.road_type,
                 length=segment.length,
@@ -528,13 +538,13 @@ def get_user_segment_stats(db, user_id):
         'completion_percentage': (run_length / total_length * 100) if total_length > 0 else 0
     }
 
-def reset_segment_run_status(db, user_id, segment_osm_id):
+def reset_segment_run_status(db, user_id, segment_id):
     """Reset the run status of a specific segment"""
     segment = (
         db.query(UserRoadSegment)
         .filter(
             UserRoadSegment.user_id == user_id,
-            UserRoadSegment.osm_id == segment_osm_id
+            UserRoadSegment.segment_id == segment_id
         )
         .first()
     )
