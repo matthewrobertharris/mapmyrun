@@ -38,6 +38,7 @@ from database.models import User, RoadSegment, Route, route_segments, Location
 from datetime import datetime, timezone
 from collections import defaultdict
 import csv
+import shutil
 
 # Configure logging
 logging.basicConfig(
@@ -45,6 +46,19 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+
+def ensure_output_folders():
+    """Create output folders if they don't exist"""
+    folders = ['visualizations', 'debug']
+    
+    for folder in folders:
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+            print(f"Created folder: {folder}")
+        else:
+            print(f"Folder already exists: {folder}")
+    
+    return True
 
 def register_user(db, username):
     """
@@ -131,6 +145,7 @@ def display_menu(username):
     print("8. Diagnose and fix road segment issues")
     print("9. Visualize all road segments in database")
     print("10. Visualize specific route (debugging)")
+    print("11. Clean up and organize files")
     print("0. Reset database (WARNING: Deletes all data)")
     print("00. Exit")
     return input("\nSelect an option: ")
@@ -422,7 +437,10 @@ def process_location_routes(db, location):
         try:
             import csv
             
-            cycles_filename = f"cycles_{location.name.replace(' ', '_')}.csv"
+            # Ensure debug folder exists
+            ensure_output_folders()
+            
+            cycles_filename = os.path.join('debug', f"cycles_{location.name.replace(' ', '_')}.csv")
             
             with open(cycles_filename, 'w', newline='', encoding='utf-8') as csvfile:
                 fieldnames = ['cycle_number', 'edge_number', 'node_from', 'node_to', 'osm_id', 'expected_segment_id', 'edge_exists_in_graph', 'length', 'name', 'highway']
@@ -580,7 +598,10 @@ def process_location_routes(db, location):
         try:
             import csv
             
-            routes_filename = f"routes_debug_{location.name.replace(' ', '_')}.csv"
+            # Ensure debug folder exists
+            ensure_output_folders()
+            
+            routes_filename = os.path.join('debug', f"routes_debug_{location.name.replace(' ', '_')}.csv")
             
             with open(routes_filename, 'w', newline='', encoding='utf-8') as csvfile:
                 fieldnames = ['route_id', 'route_name', 'total_segments', 'segments_with_geometry', 'segments_without_geometry', 'total_length_m', 'will_visualize']
@@ -1218,7 +1239,10 @@ def visualize_location_data(db, location):
         m.get_root().html.add_child(folium.Element(all_toggle_js))
         
         # Save the map
-        output_file = 'route_map.html'
+        # Ensure visualizations folder exists
+        ensure_output_folders()
+        
+        output_file = os.path.join('visualizations', 'route_map.html')
         m.save(output_file)
         
         print(f"\n✓ Route visualization created successfully!")
@@ -2195,7 +2219,10 @@ def visualize_user_progress(db, user):
         m.get_root().html.add_child(folium.Element(all_toggle_js))
         
         # Save the map
-        output_file = 'user_progress_map.html'
+        # Ensure visualizations folder exists
+        ensure_output_folders()
+        
+        output_file = os.path.join('visualizations', 'user_progress_map.html')
         m.save(output_file)
         
         print(f"\n✓ Progress map created successfully!")
@@ -2540,7 +2567,10 @@ def visualize_all_road_segments(db):
         m.get_root().html.add_child(folium.Element(legend_html))
         
         # Save the map
-        output_file = 'all_road_segments.html'
+        # Ensure visualizations folder exists
+        ensure_output_folders()
+        
+        output_file = os.path.join('visualizations', 'all_road_segments.html')
         m.save(output_file)
         
         print(f"\n✓ Road segments visualization created successfully!")
@@ -2890,7 +2920,10 @@ def visualize_specific_route(db, user):
         m.get_root().html.add_child(folium.Element(legend_html))
         
         # Save the map
-        output_file = f'route_{selected_route.id}_debug.html'
+        # Ensure visualizations folder exists
+        ensure_output_folders()
+        
+        output_file = os.path.join('visualizations', f'route_{selected_route.id}_debug.html')
         m.save(output_file)
         
         print(f"\n✅ Route visualization created!")
@@ -2905,6 +2938,64 @@ def visualize_specific_route(db, user):
         print(f"\nError creating route visualization: {str(e)}")
         import traceback
         traceback.print_exc()
+
+def cleanup_existing_files():
+    """Move existing files to appropriate folders"""
+    print("\n=== Cleaning Up Files ===")
+    
+    # Create folders if they don't exist
+    ensure_output_folders()
+    
+    import shutil
+    
+    # HTML files to move to visualizations
+    html_files = [
+        'route_map.html',
+        'user_progress_map.html', 
+        'all_road_segments.html',
+        'initial_solution.html'
+    ]
+    
+    files_moved = 0
+    
+    # Move HTML files
+    for file in html_files:
+        if os.path.exists(file):
+            dest = os.path.join('visualizations', file)
+            try:
+                shutil.move(file, dest)
+                print(f'✅ Moved {file} to visualizations/')
+                files_moved += 1
+            except Exception as e:
+                print(f'❌ Error moving {file}: {str(e)}')
+    
+    # Move any route debug HTML files
+    for file in os.listdir('.'):
+        if file.startswith('route_') and file.endswith('_debug.html'):
+            dest = os.path.join('visualizations', file)
+            try:
+                shutil.move(file, dest)
+                print(f'✅ Moved {file} to visualizations/')
+                files_moved += 1
+            except Exception as e:
+                print(f'❌ Error moving {file}: {str(e)}')
+    
+    # CSV files to move to debug
+    for file in os.listdir('.'):
+        if file.endswith('.csv') and (file.startswith('cycles_') or file.startswith('routes_debug_')):
+            dest = os.path.join('debug', file)
+            try:
+                shutil.move(file, dest)
+                print(f'✅ Moved {file} to debug/')
+                files_moved += 1
+            except Exception as e:
+                print(f'❌ Error moving {file}: {str(e)}')
+    
+    print(f'\n✅ File cleanup complete! Moved {files_moved} files.')
+    print(f'📁 HTML files are now in: visualizations/')
+    print(f'📁 CSV files are now in: debug/')
+    
+    return files_moved > 0
 
 def main():
     # Get user information
@@ -2980,6 +3071,9 @@ def main():
                 
             elif choice == "10":
                 visualize_specific_route(db, user)
+                
+            elif choice == "11":
+                cleanup_existing_files()
                 
             else:
                 print("\nInvalid option. Please try again.")
