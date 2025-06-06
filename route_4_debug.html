@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_246f46da4af51ff8a8f61bd142379c97 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+        <div style="position: fixed; 
+                    bottom: 10px; left: 10px; width: 250px; height: 180px;
+                    border:2px solid grey; z-index:9999; background-color:white;
+                    padding: 8px; font-size: 12px;">
+            <h5 style="margin-top:0; margin-bottom:5px">Route 4 Debug</h5>
+            <p style="margin:2px 0"><b>Name:</b> Route 4 from Ford</p>
+            <p style="margin:2px 0"><b>Total segments:</b> 38</p>
+            <p style="margin:2px 0"><b>Rendered:</b> 38</p>
+            <p style="margin:2px 0"><b>Skipped:</b> 0</p>
+            <p style="margin:2px 0"><b>Length:</b> 3.88km</p>
+            <p style="margin:2px 0; color: red"><b>Red:</b> Start segments</p>
+            <p style="margin:2px 0; color: orange"><b>Orange:</b> Middle segments</p>
+            <p style="margin:2px 0; color: green"><b>Green:</b> End segments</p>
+        </div>
+        
+    
+            <div class="folium-map" id="map_246f46da4af51ff8a8f61bd142379c97" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_246f46da4af51ff8a8f61bd142379c97 = L.map(
+                "map_246f46da4af51ff8a8f61bd142379c97",
+                {
+                    center: [-32.71143085, 151.53511105],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "maxBounds": null,
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_d76ba2ec9760e94bd8a8cf6b9d1d9f20 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_d76ba2ec9760e94bd8a8cf6b9d1d9f20.addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+            var poly_line_563e4f6b451e68fc94504f48b0e809b1 = L.polyline(
+                [[-32.7106458, 151.5376097], [-32.7104908, 151.5373452], [-32.7103414, 151.5370335]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_52606f4ee32f59f55945c6e5c746457c = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_3fe220e93c065e5e3ed2cee69bd60bce = $(`<div id="html_3fe220e93c065e5e3ed2cee69bd60bce" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 0</b><br>                     <b>Ford Close</b><br>                     Segment ID: 31133078_346176290_346176330<br>                     OSM ID: 31133078<br>                     Type: residential<br>                     Length: 64m<br>                     Direction: Forward<br>                     Coordinates: 3 points<br>                     Order in route: 0                     </div>`)[0];
+                popup_52606f4ee32f59f55945c6e5c746457c.setContent(html_3fe220e93c065e5e3ed2cee69bd60bce);
+            
+        
+
+        poly_line_563e4f6b451e68fc94504f48b0e809b1.bindPopup(popup_52606f4ee32f59f55945c6e5c746457c)
+        ;
+
+        
+    
+    
+            var poly_line_83ab06878e4f7c9133e716a383baa97b = L.polyline(
+                [[-32.711893, 151.5371054], [-32.7118191, 151.5370805], [-32.7116977, 151.5370256], [-32.7116232, 151.5369746], [-32.7114946, 151.5368821], [-32.711382, 151.5368157], [-32.7112599, 151.5367614], [-32.7111504, 151.5367399], [-32.7110151, 151.5367382], [-32.710909, 151.5367453], [-32.7108153, 151.5367681], [-32.7107217, 151.536807], [-32.7106438, 151.5368459], [-32.7103414, 151.5370335]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_cb674c44fdb969767825829d6d0b9dfa = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_bf1133b63c569729930f1409ab0e711f = $(`<div id="html_bf1133b63c569729930f1409ab0e711f" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 1</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176290_6272833061<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 186m<br>                     Direction: Forward<br>                     Coordinates: 14 points<br>                     Order in route: 1                     </div>`)[0];
+                popup_cb674c44fdb969767825829d6d0b9dfa.setContent(html_bf1133b63c569729930f1409ab0e711f);
+            
+        
+
+        poly_line_83ab06878e4f7c9133e716a383baa97b.bindPopup(popup_cb674c44fdb969767825829d6d0b9dfa)
+        ;
+
+        
+    
+    
+            var poly_line_8b80744cf346fbe8d89606a243f324d1 = L.polyline(
+                [[-32.711893, 151.5371054], [-32.7119523, 151.5371288], [-32.712021, 151.5371456], [-32.7120869, 151.5371536], [-32.7121621, 151.5371543], [-32.7122292, 151.5371436], [-32.7124757, 151.537086]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_7b5bea8dbc3ae1bb8737b786ea02ae4d = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_8b9e835f6fcfeb2394af682825e40f2f = $(`<div id="html_8b9e835f6fcfeb2394af682825e40f2f" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 2</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176273_6272833061<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 66m<br>                     Direction: Forward<br>                     Coordinates: 7 points<br>                     Order in route: 2                     </div>`)[0];
+                popup_7b5bea8dbc3ae1bb8737b786ea02ae4d.setContent(html_8b9e835f6fcfeb2394af682825e40f2f);
+            
+        
+
+        poly_line_8b80744cf346fbe8d89606a243f324d1.bindPopup(popup_7b5bea8dbc3ae1bb8737b786ea02ae4d)
+        ;
+
+        
+    
+    
+            var poly_line_bebb488c220c6beebd9019b814abe9b5 = L.polyline(
+                [[-32.7124757, 151.537086], [-32.7125948, 151.5370555], [-32.7126968, 151.5370524], [-32.7127799, 151.5370685], [-32.7128724, 151.5370899], [-32.7130978, 151.5371808], [-32.7132064, 151.5372053], [-32.7132906, 151.5372089], [-32.7133727, 151.537196]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_284b0a56a9d3a692bebf58de89ccc4fa = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_f34b3ce4376dbe3b8467595ad0ab47b8 = $(`<div id="html_f34b3ce4376dbe3b8467595ad0ab47b8" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 3</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176270_346176273<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 102m<br>                     Direction: Forward<br>                     Coordinates: 9 points<br>                     Order in route: 3                     </div>`)[0];
+                popup_284b0a56a9d3a692bebf58de89ccc4fa.setContent(html_f34b3ce4376dbe3b8467595ad0ab47b8);
+            
+        
+
+        poly_line_bebb488c220c6beebd9019b814abe9b5.bindPopup(popup_284b0a56a9d3a692bebf58de89ccc4fa)
+        ;
+
+        
+    
+    
+            var poly_line_7a3c5041772e178c2305f025986e60e4 = L.polyline(
+                [[-32.7133727, 151.537196], [-32.7131973, 151.5359478]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_a095a731df147b0f0bb58555d709d146 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_8eb01de5df65c65458c6bfc70acd3115 = $(`<div id="html_8eb01de5df65c65458c6bfc70acd3115" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 4</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176270_346176346<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 118m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 4                     </div>`)[0];
+                popup_a095a731df147b0f0bb58555d709d146.setContent(html_8eb01de5df65c65458c6bfc70acd3115);
+            
+        
+
+        poly_line_7a3c5041772e178c2305f025986e60e4.bindPopup(popup_a095a731df147b0f0bb58555d709d146)
+        ;
+
+        
+    
+    
+            var poly_line_f40c15f57c3626b679dd21c9065e17de = L.polyline(
+                [[-32.7129584, 151.5349793], [-32.713112, 151.5354277], [-32.7131387, 151.5355396], [-32.7131973, 151.5359478]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_92d2b7134137c42f2c45ff82e0282ea9 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_eabd8774d86220a5170a4abbd64bc96f = $(`<div id="html_eabd8774d86220a5170a4abbd64bc96f" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 5</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176346_346176351<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 95m<br>                     Direction: Forward<br>                     Coordinates: 4 points<br>                     Order in route: 5                     </div>`)[0];
+                popup_92d2b7134137c42f2c45ff82e0282ea9.setContent(html_eabd8774d86220a5170a4abbd64bc96f);
+            
+        
+
+        poly_line_f40c15f57c3626b679dd21c9065e17de.bindPopup(popup_92d2b7134137c42f2c45ff82e0282ea9)
+        ;
+
+        
+    
+    
+            var poly_line_55c8f5ed59ca7aa626e45f5fec89530e = L.polyline(
+                [[-32.7121658, 151.5342115], [-32.7126395, 151.534489], [-32.7127238, 151.5345569], [-32.7128126, 151.5346545], [-32.7128855, 151.5347876], [-32.7129584, 151.5349793]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_d33d9df3884698b32428bfeb7796e712 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_d78d428f8da2d030a878d3e9aa9113f4 = $(`<div id="html_d78d428f8da2d030a878d3e9aa9113f4" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 6</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176351_346176370<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 118m<br>                     Direction: Forward<br>                     Coordinates: 6 points<br>                     Order in route: 6                     </div>`)[0];
+                popup_d33d9df3884698b32428bfeb7796e712.setContent(html_d78d428f8da2d030a878d3e9aa9113f4);
+            
+        
+
+        poly_line_55c8f5ed59ca7aa626e45f5fec89530e.bindPopup(popup_d33d9df3884698b32428bfeb7796e712)
+        ;
+
+        
+    
+    
+            var poly_line_9b992505faaa39041625c19053380c38 = L.polyline(
+                [[-32.7127016, 151.5334705], [-32.7122716, 151.5339884], [-32.7122258, 151.534059], [-32.7121658, 151.5342115]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_a373baa78e5b97b824680c22ae0483cc = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_acdf68088ec65749db9ae3622ee628b5 = $(`<div id="html_acdf68088ec65749db9ae3622ee628b5" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 7</b><br>                     <b>Peter Street</b><br>                     Segment ID: 31133085_346176370_346176418<br>                     OSM ID: 31133085<br>                     Type: residential<br>                     Length: 92m<br>                     Direction: Forward<br>                     Coordinates: 4 points<br>                     Order in route: 7                     </div>`)[0];
+                popup_a373baa78e5b97b824680c22ae0483cc.setContent(html_acdf68088ec65749db9ae3622ee628b5);
+            
+        
+
+        poly_line_9b992505faaa39041625c19053380c38.bindPopup(popup_a373baa78e5b97b824680c22ae0483cc)
+        ;
+
+        
+    
+    
+            var poly_line_e7c12be88253aef2cfc848c1819b460f = L.polyline(
+                [[-32.7123583, 151.5331425], [-32.7124662, 151.5332163], [-32.7125405, 151.5332824], [-32.7126424, 151.5333957], [-32.7127016, 151.5334705]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_dbfd9c302b849a942e9e330597f6bda8 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_5f6614a3e32d5b8721ff8697a35be312 = $(`<div id="html_5f6614a3e32d5b8721ff8697a35be312" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 8</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133091_346176418_346176508<br>                     OSM ID: 31133091<br>                     Type: residential<br>                     Length: 49m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 8                     </div>`)[0];
+                popup_dbfd9c302b849a942e9e330597f6bda8.setContent(html_5f6614a3e32d5b8721ff8697a35be312);
+            
+        
+
+        poly_line_e7c12be88253aef2cfc848c1819b460f.bindPopup(popup_dbfd9c302b849a942e9e330597f6bda8)
+        ;
+
+        
+    
+    
+            var poly_line_f1d7331abdf2f89f1dbc876713c6b565 = L.polyline(
+                [[-32.7123583, 151.5331425], [-32.7122777, 151.5331134], [-32.7121897, 151.5330935], [-32.7120402, 151.5330705], [-32.7118907, 151.5330838], [-32.7117361, 151.5331015], [-32.7116221, 151.5331055], [-32.7115133, 151.5330939], [-32.711419, 151.5330733], [-32.7113333, 151.5330492], [-32.7112696, 151.5330241], [-32.7108081, 151.5328606], [-32.7107194, 151.5328427], [-32.7106235, 151.5328292], [-32.7105434, 151.532835], [-32.7104199, 151.5328786]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_96a3a85d0dcf6b0d9e589302d2d4b46d = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_3a4c74009736d8b057b3751e7d5e7174 = $(`<div id="html_3a4c74009736d8b057b3751e7d5e7174" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 9</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133091_346176490_346176508<br>                     OSM ID: 31133091<br>                     Type: residential<br>                     Length: 220m<br>                     Direction: Forward<br>                     Coordinates: 16 points<br>                     Order in route: 9                     </div>`)[0];
+                popup_96a3a85d0dcf6b0d9e589302d2d4b46d.setContent(html_3a4c74009736d8b057b3751e7d5e7174);
+            
+        
+
+        poly_line_f1d7331abdf2f89f1dbc876713c6b565.bindPopup(popup_96a3a85d0dcf6b0d9e589302d2d4b46d)
+        ;
+
+        
+    
+    
+            var poly_line_0265bde2070fcaff928c6330fec677af = L.polyline(
+                [[-32.7104199, 151.5328786], [-32.7103613, 151.5329293], [-32.7102762, 151.5330341], [-32.7102361, 151.5330834], [-32.7102003, 151.5331666], [-32.7101219, 151.5334442], [-32.7100961, 151.5335633]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_2a390493f2edbbfbbd33e263167130da = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_c9c4029965774899d198cbe002734167 = $(`<div id="html_c9c4029965774899d198cbe002734167" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 10</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133091_346176471_346176490<br>                     OSM ID: 31133091<br>                     Type: residential<br>                     Length: 76m<br>                     Direction: Forward<br>                     Coordinates: 7 points<br>                     Order in route: 10                     </div>`)[0];
+                popup_2a390493f2edbbfbbd33e263167130da.setContent(html_c9c4029965774899d198cbe002734167);
+            
+        
+
+        poly_line_0265bde2070fcaff928c6330fec677af.bindPopup(popup_2a390493f2edbbfbbd33e263167130da)
+        ;
+
+        
+    
+    
+            var poly_line_247bebf5ce253e37554c12ec7761bbc7 = L.polyline(
+                [[-32.7100961, 151.5335633], [-32.7107194, 151.5338109], [-32.7111369, 151.5339571], [-32.7111933, 151.533996], [-32.7112486, 151.5340443], [-32.7113061, 151.5341234], [-32.7113928, 151.5342534]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_0d3259fc483d3dac3a9bf61669c1d31d = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_e7661a96e4ab317d54e9720314abb1ae = $(`<div id="html_e7661a96e4ab317d54e9720314abb1ae" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 11</b><br>                     <b>Walsh Street</b><br>                     Segment ID: 31133089_346176393_346176471<br>                     OSM ID: 31133089<br>                     Type: residential<br>                     Length: 162m<br>                     Direction: Forward<br>                     Coordinates: 7 points<br>                     Order in route: 11                     </div>`)[0];
+                popup_0d3259fc483d3dac3a9bf61669c1d31d.setContent(html_e7661a96e4ab317d54e9720314abb1ae);
+            
+        
+
+        poly_line_247bebf5ce253e37554c12ec7761bbc7.bindPopup(popup_0d3259fc483d3dac3a9bf61669c1d31d)
+        ;
+
+        
+    
+    
+            var poly_line_7389750c55bae27fe67693744468fe94 = L.polyline(
+                [[-32.7113928, 151.5342534], [-32.7115623, 151.5341623], [-32.7116883, 151.5341171], [-32.7117643, 151.534102], [-32.7118371, 151.5341037], [-32.7119234, 151.5341113], [-32.71199, 151.5341315], [-32.7121658, 151.5342115]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_99571a37cb402e2c6332c296454455ad = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_ec5306c31dd38d7e09b747ad1d9bd6af = $(`<div id="html_ec5306c31dd38d7e09b747ad1d9bd6af" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 12</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176370_346176393<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 90m<br>                     Direction: Forward<br>                     Coordinates: 8 points<br>                     Order in route: 12                     </div>`)[0];
+                popup_99571a37cb402e2c6332c296454455ad.setContent(html_ec5306c31dd38d7e09b747ad1d9bd6af);
+            
+        
+
+        poly_line_7389750c55bae27fe67693744468fe94.bindPopup(popup_99571a37cb402e2c6332c296454455ad)
+        ;
+
+        
+    
+    
+            var poly_line_df497448244fd3e24fc1905a05cf8779 = L.polyline(
+                [[-32.7127016, 151.5334705], [-32.7122716, 151.5339884], [-32.7122258, 151.534059], [-32.7121658, 151.5342115]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_30eb3255e1595ede5244d69c658bf828 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_0e90b95fe011cb849942f7ff30f757fc = $(`<div id="html_0e90b95fe011cb849942f7ff30f757fc" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 13</b><br>                     <b>Peter Street</b><br>                     Segment ID: 31133085_346176370_346176418<br>                     OSM ID: 31133085<br>                     Type: residential<br>                     Length: 92m<br>                     Direction: Forward<br>                     Coordinates: 4 points<br>                     Order in route: 13                     </div>`)[0];
+                popup_30eb3255e1595ede5244d69c658bf828.setContent(html_0e90b95fe011cb849942f7ff30f757fc);
+            
+        
+
+        poly_line_df497448244fd3e24fc1905a05cf8779.bindPopup(popup_30eb3255e1595ede5244d69c658bf828)
+        ;
+
+        
+    
+    
+            var poly_line_bb606bce6d0c62652dc02e852dd94035 = L.polyline(
+                [[-32.7123583, 151.5331425], [-32.7124662, 151.5332163], [-32.7125405, 151.5332824], [-32.7126424, 151.5333957], [-32.7127016, 151.5334705]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_9d302a9fd59c1d4144656c0d52dea545 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_6b8406018be826e1feee60ba9e188657 = $(`<div id="html_6b8406018be826e1feee60ba9e188657" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 14</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133091_346176418_346176508<br>                     OSM ID: 31133091<br>                     Type: residential<br>                     Length: 49m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 14                     </div>`)[0];
+                popup_9d302a9fd59c1d4144656c0d52dea545.setContent(html_6b8406018be826e1feee60ba9e188657);
+            
+        
+
+        poly_line_bb606bce6d0c62652dc02e852dd94035.bindPopup(popup_9d302a9fd59c1d4144656c0d52dea545)
+        ;
+
+        
+    
+    
+            var poly_line_9ef6f149c4cd6bf661c15fdfe01fd8ca = L.polyline(
+                [[-32.7123583, 151.5331425], [-32.7124469, 151.5328913]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_e115b63afb508e74db89a0caaff7146e = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_9f3fb37fa886872a209570f10bc6a6a7 = $(`<div id="html_9f3fb37fa886872a209570f10bc6a6a7" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 15</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133094_346176508_346176524<br>                     OSM ID: 31133094<br>                     Type: residential<br>                     Length: 25m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 15                     </div>`)[0];
+                popup_e115b63afb508e74db89a0caaff7146e.setContent(html_9f3fb37fa886872a209570f10bc6a6a7);
+            
+        
+
+        poly_line_9ef6f149c4cd6bf661c15fdfe01fd8ca.bindPopup(popup_e115b63afb508e74db89a0caaff7146e)
+        ;
+
+        
+    
+    
+            var poly_line_7687a320390d50276fcceaf5ca1486ef = L.polyline(
+                [[-32.7123583, 151.5331425], [-32.7124469, 151.5328913]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_3dfc248bb03f0ebfd81b8f82cef5c460 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_a26a9325e3ac0c773f811ef640ad36d2 = $(`<div id="html_a26a9325e3ac0c773f811ef640ad36d2" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 16</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133094_346176508_346176524<br>                     OSM ID: 31133094<br>                     Type: residential<br>                     Length: 25m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 16                     </div>`)[0];
+                popup_3dfc248bb03f0ebfd81b8f82cef5c460.setContent(html_a26a9325e3ac0c773f811ef640ad36d2);
+            
+        
+
+        poly_line_7687a320390d50276fcceaf5ca1486ef.bindPopup(popup_3dfc248bb03f0ebfd81b8f82cef5c460)
+        ;
+
+        
+    
+    
+            var poly_line_bd8f870482cc7f780a45331b303c4770 = L.polyline(
+                [[-32.7123583, 151.5331425], [-32.7122777, 151.5331134], [-32.7121897, 151.5330935], [-32.7120402, 151.5330705], [-32.7118907, 151.5330838], [-32.7117361, 151.5331015], [-32.7116221, 151.5331055], [-32.7115133, 151.5330939], [-32.711419, 151.5330733], [-32.7113333, 151.5330492], [-32.7112696, 151.5330241], [-32.7108081, 151.5328606], [-32.7107194, 151.5328427], [-32.7106235, 151.5328292], [-32.7105434, 151.532835], [-32.7104199, 151.5328786]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_86ccbf30c7f701e9536086032d436e52 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_5eedc76fa1de9be63ac5a7f32a532316 = $(`<div id="html_5eedc76fa1de9be63ac5a7f32a532316" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 17</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133091_346176490_346176508<br>                     OSM ID: 31133091<br>                     Type: residential<br>                     Length: 220m<br>                     Direction: Forward<br>                     Coordinates: 16 points<br>                     Order in route: 17                     </div>`)[0];
+                popup_86ccbf30c7f701e9536086032d436e52.setContent(html_5eedc76fa1de9be63ac5a7f32a532316);
+            
+        
+
+        poly_line_bd8f870482cc7f780a45331b303c4770.bindPopup(popup_86ccbf30c7f701e9536086032d436e52)
+        ;
+
+        
+    
+    
+            var poly_line_a657a2a3e82c804d9b285b621bd0a9c8 = L.polyline(
+                [[-32.7104199, 151.5328786], [-32.7103003, 151.5326124]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_e1332717ddc02ead5f47ad5b04a3b915 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_e6bc73173a676ff669cec8941e7b689c = $(`<div id="html_e6bc73173a676ff669cec8941e7b689c" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 18</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133093_346176490_346176520<br>                     OSM ID: 31133093<br>                     Type: residential<br>                     Length: 28m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 18                     </div>`)[0];
+                popup_e1332717ddc02ead5f47ad5b04a3b915.setContent(html_e6bc73173a676ff669cec8941e7b689c);
+            
+        
+
+        poly_line_a657a2a3e82c804d9b285b621bd0a9c8.bindPopup(popup_e1332717ddc02ead5f47ad5b04a3b915)
+        ;
+
+        
+    
+    
+            var poly_line_2229a805c7eee9da7bb6f2f1862955b4 = L.polyline(
+                [[-32.7104199, 151.5328786], [-32.7103003, 151.5326124]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_94952027be34ebb0313599e0cd8bdc82 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_627407f6f6b73c0aa9bea5de6ec9a048 = $(`<div id="html_627407f6f6b73c0aa9bea5de6ec9a048" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 19</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133093_346176490_346176520<br>                     OSM ID: 31133093<br>                     Type: residential<br>                     Length: 28m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 19                     </div>`)[0];
+                popup_94952027be34ebb0313599e0cd8bdc82.setContent(html_627407f6f6b73c0aa9bea5de6ec9a048);
+            
+        
+
+        poly_line_2229a805c7eee9da7bb6f2f1862955b4.bindPopup(popup_94952027be34ebb0313599e0cd8bdc82)
+        ;
+
+        
+    
+    
+            var poly_line_b2569a8c803212c579aefaa2444b0a8e = L.polyline(
+                [[-32.7104199, 151.5328786], [-32.7103613, 151.5329293], [-32.7102762, 151.5330341], [-32.7102361, 151.5330834], [-32.7102003, 151.5331666], [-32.7101219, 151.5334442], [-32.7100961, 151.5335633]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_ce0da3f048a552372e9c71d1682b81a7 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_5f43bb8dc061299f14fc21e5704f46bd = $(`<div id="html_5f43bb8dc061299f14fc21e5704f46bd" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 20</b><br>                     <b>Wolstenholme Street</b><br>                     Segment ID: 31133091_346176471_346176490<br>                     OSM ID: 31133091<br>                     Type: residential<br>                     Length: 76m<br>                     Direction: Forward<br>                     Coordinates: 7 points<br>                     Order in route: 20                     </div>`)[0];
+                popup_ce0da3f048a552372e9c71d1682b81a7.setContent(html_5f43bb8dc061299f14fc21e5704f46bd);
+            
+        
+
+        poly_line_b2569a8c803212c579aefaa2444b0a8e.bindPopup(popup_ce0da3f048a552372e9c71d1682b81a7)
+        ;
+
+        
+    
+    
+            var poly_line_3b87bc8f2960e01af8495e75c72663b8 = L.polyline(
+                [[-32.7100961, 151.5335633], [-32.7107194, 151.5338109], [-32.7111369, 151.5339571], [-32.7111933, 151.533996], [-32.7112486, 151.5340443], [-32.7113061, 151.5341234], [-32.7113928, 151.5342534]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_21ecea9f6c0bb4f8f78ed0490974d93f = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_e20d4c2bbf325a93cd852b9b21940c65 = $(`<div id="html_e20d4c2bbf325a93cd852b9b21940c65" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 21</b><br>                     <b>Walsh Street</b><br>                     Segment ID: 31133089_346176393_346176471<br>                     OSM ID: 31133089<br>                     Type: residential<br>                     Length: 162m<br>                     Direction: Forward<br>                     Coordinates: 7 points<br>                     Order in route: 21                     </div>`)[0];
+                popup_21ecea9f6c0bb4f8f78ed0490974d93f.setContent(html_e20d4c2bbf325a93cd852b9b21940c65);
+            
+        
+
+        poly_line_3b87bc8f2960e01af8495e75c72663b8.bindPopup(popup_21ecea9f6c0bb4f8f78ed0490974d93f)
+        ;
+
+        
+    
+    
+            var poly_line_4f5676c46211c405f924d1af00e0e38e = L.polyline(
+                [[-32.7110297, 151.5349133], [-32.711085, 151.5347926], [-32.7111245, 151.5346934], [-32.7111685, 151.5345646], [-32.7111911, 151.5345097], [-32.711217, 151.5344574], [-32.711287, 151.5343635], [-32.7113928, 151.5342534]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_fff96c7014f102985c20cb958d2978b0 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_99ee32c32e9a02aefc5b4a390f76734e = $(`<div id="html_99ee32c32e9a02aefc5b4a390f76734e" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 22</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176393_346176404<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 75m<br>                     Direction: Forward<br>                     Coordinates: 8 points<br>                     Order in route: 22                     </div>`)[0];
+                popup_fff96c7014f102985c20cb958d2978b0.setContent(html_99ee32c32e9a02aefc5b4a390f76734e);
+            
+        
+
+        poly_line_4f5676c46211c405f924d1af00e0e38e.bindPopup(popup_fff96c7014f102985c20cb958d2978b0)
+        ;
+
+        
+    
+    
+            var poly_line_e56a2520fb3095320fdff0200a0d71ab = L.polyline(
+                [[-32.7104, 151.5355885], [-32.7108657, 151.5351442], [-32.7109225, 151.5350783], [-32.7109733, 151.5350032], [-32.7110297, 151.5349133]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_6910211806d18af30518555118fa82ae = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_21c3d313d6dbad48eb7b18a67fa063a8 = $(`<div id="html_21c3d313d6dbad48eb7b18a67fa063a8" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 23</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176404_346176406<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 95m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 23                     </div>`)[0];
+                popup_6910211806d18af30518555118fa82ae.setContent(html_21c3d313d6dbad48eb7b18a67fa063a8);
+            
+        
+
+        poly_line_e56a2520fb3095320fdff0200a0d71ab.bindPopup(popup_6910211806d18af30518555118fa82ae)
+        ;
+
+        
+    
+    
+            var poly_line_d9cf66dafbc52300da1f3f8f39d0a645 = L.polyline(
+                [[-32.7097322, 151.5364386], [-32.7097783, 151.5363282], [-32.7098117, 151.5362669], [-32.7104, 151.5355885]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_ddf9e028ad188d66918a450ba3d60460 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_44373fd070e7aa6f688a231a4ad10294 = $(`<div id="html_44373fd070e7aa6f688a231a4ad10294" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 24</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176406_346176408<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 110m<br>                     Direction: Forward<br>                     Coordinates: 4 points<br>                     Order in route: 24                     </div>`)[0];
+                popup_ddf9e028ad188d66918a450ba3d60460.setContent(html_44373fd070e7aa6f688a231a4ad10294);
+            
+        
+
+        poly_line_d9cf66dafbc52300da1f3f8f39d0a645.bindPopup(popup_ddf9e028ad188d66918a450ba3d60460)
+        ;
+
+        
+    
+    
+            var poly_line_f8de49282986e1061b2000ae4b76dec2 = L.polyline(
+                [[-32.7097322, 151.5364386], [-32.7097783, 151.5363282], [-32.7098117, 151.5362669], [-32.7104, 151.5355885]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_7adc35043c5a3d190e82f544293e5bd2 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_4e97fdd3105cc3e0d7d08cccd9e6164b = $(`<div id="html_4e97fdd3105cc3e0d7d08cccd9e6164b" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 25</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176406_346176408<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 110m<br>                     Direction: Forward<br>                     Coordinates: 4 points<br>                     Order in route: 25                     </div>`)[0];
+                popup_7adc35043c5a3d190e82f544293e5bd2.setContent(html_4e97fdd3105cc3e0d7d08cccd9e6164b);
+            
+        
+
+        poly_line_f8de49282986e1061b2000ae4b76dec2.bindPopup(popup_7adc35043c5a3d190e82f544293e5bd2)
+        ;
+
+        
+    
+    
+            var poly_line_c0baddf5437d62edc212b01d96037eec = L.polyline(
+                [[-32.709489, 151.5342915], [-32.7095646, 151.5343022], [-32.709635, 151.5343192], [-32.709705, 151.5343447], [-32.7097869, 151.5343853], [-32.7098381, 151.5344211], [-32.7098821, 151.5344614], [-32.7099227, 151.534519], [-32.7099651, 151.5345852], [-32.7099927, 151.5346505], [-32.7100288, 151.5347819], [-32.710057, 151.5349375], [-32.7100713, 151.535021], [-32.710101, 151.5351172], [-32.7101304, 151.5351976], [-32.7101777, 151.5352714], [-32.7104, 151.5355885]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_f49e1b25a38f6e63deb3cf75b19b4ee6 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_044a9fcb6c5113bfe3bf5014e156662d = $(`<div id="html_044a9fcb6c5113bfe3bf5014e156662d" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 26</b><br>                     <b>Krohn Street</b><br>                     Segment ID: 31133088_346176406_346176460<br>                     OSM ID: 31133088<br>                     Type: residential<br>                     Length: 170m<br>                     Direction: Forward<br>                     Coordinates: 17 points<br>                     Order in route: 26                     </div>`)[0];
+                popup_f49e1b25a38f6e63deb3cf75b19b4ee6.setContent(html_044a9fcb6c5113bfe3bf5014e156662d);
+            
+        
+
+        poly_line_c0baddf5437d62edc212b01d96037eec.bindPopup(popup_f49e1b25a38f6e63deb3cf75b19b4ee6)
+        ;
+
+        
+    
+    
+            var poly_line_a8cf718f7c302baaf15892c3179fad55 = L.polyline(
+                [[-32.709489, 151.5342915], [-32.7095646, 151.5343022], [-32.709635, 151.5343192], [-32.709705, 151.5343447], [-32.7097869, 151.5343853], [-32.7098381, 151.5344211], [-32.7098821, 151.5344614], [-32.7099227, 151.534519], [-32.7099651, 151.5345852], [-32.7099927, 151.5346505], [-32.7100288, 151.5347819], [-32.710057, 151.5349375], [-32.7100713, 151.535021], [-32.710101, 151.5351172], [-32.7101304, 151.5351976], [-32.7101777, 151.5352714], [-32.7104, 151.5355885]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_76003b71f7c0b3d07d754dc65fd81080 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_a38ea262ae880bcbd2d706ac31ceaeae = $(`<div id="html_a38ea262ae880bcbd2d706ac31ceaeae" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 27</b><br>                     <b>Krohn Street</b><br>                     Segment ID: 31133088_346176406_346176460<br>                     OSM ID: 31133088<br>                     Type: residential<br>                     Length: 170m<br>                     Direction: Forward<br>                     Coordinates: 17 points<br>                     Order in route: 27                     </div>`)[0];
+                popup_76003b71f7c0b3d07d754dc65fd81080.setContent(html_a38ea262ae880bcbd2d706ac31ceaeae);
+            
+        
+
+        poly_line_a8cf718f7c302baaf15892c3179fad55.bindPopup(popup_76003b71f7c0b3d07d754dc65fd81080)
+        ;
+
+        
+    
+    
+            var poly_line_abbde24c9d105a2fd812fe343b8e414a = L.polyline(
+                [[-32.7104, 151.5355885], [-32.7108657, 151.5351442], [-32.7109225, 151.5350783], [-32.7109733, 151.5350032], [-32.7110297, 151.5349133]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_05374fdda3acc1a7b9618306a701a0bd = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_e628811217937acd7ae879ffee55a7bf = $(`<div id="html_e628811217937acd7ae879ffee55a7bf" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 28</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176404_346176406<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 95m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 28                     </div>`)[0];
+                popup_05374fdda3acc1a7b9618306a701a0bd.setContent(html_e628811217937acd7ae879ffee55a7bf);
+            
+        
+
+        poly_line_abbde24c9d105a2fd812fe343b8e414a.bindPopup(popup_05374fdda3acc1a7b9618306a701a0bd)
+        ;
+
+        
+    
+    
+            var poly_line_1c7b0c22bdfcad3f5b1d70545b3cd387 = L.polyline(
+                [[-32.7110297, 151.5349133], [-32.711085, 151.5347926], [-32.7111245, 151.5346934], [-32.7111685, 151.5345646], [-32.7111911, 151.5345097], [-32.711217, 151.5344574], [-32.711287, 151.5343635], [-32.7113928, 151.5342534]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_9e3d46bd57fc4bb1d3ec4c5432dbe927 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_25dc3196b701ed2d215ea223d894b340 = $(`<div id="html_25dc3196b701ed2d215ea223d894b340" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 29</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176393_346176404<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 75m<br>                     Direction: Forward<br>                     Coordinates: 8 points<br>                     Order in route: 29                     </div>`)[0];
+                popup_9e3d46bd57fc4bb1d3ec4c5432dbe927.setContent(html_25dc3196b701ed2d215ea223d894b340);
+            
+        
+
+        poly_line_1c7b0c22bdfcad3f5b1d70545b3cd387.bindPopup(popup_9e3d46bd57fc4bb1d3ec4c5432dbe927)
+        ;
+
+        
+    
+    
+            var poly_line_bbbc5a5da2a03bf75539aa598f03388c = L.polyline(
+                [[-32.7113928, 151.5342534], [-32.7115623, 151.5341623], [-32.7116883, 151.5341171], [-32.7117643, 151.534102], [-32.7118371, 151.5341037], [-32.7119234, 151.5341113], [-32.71199, 151.5341315], [-32.7121658, 151.5342115]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_16f07d47f4679e98ff81f18488d85a0a = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_9df6063cd4bb46cf61857c6bb7b0b7c8 = $(`<div id="html_9df6063cd4bb46cf61857c6bb7b0b7c8" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 30</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176370_346176393<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 90m<br>                     Direction: Forward<br>                     Coordinates: 8 points<br>                     Order in route: 30                     </div>`)[0];
+                popup_16f07d47f4679e98ff81f18488d85a0a.setContent(html_9df6063cd4bb46cf61857c6bb7b0b7c8);
+            
+        
+
+        poly_line_bbbc5a5da2a03bf75539aa598f03388c.bindPopup(popup_16f07d47f4679e98ff81f18488d85a0a)
+        ;
+
+        
+    
+    
+            var poly_line_11b082f4b3fd9c641629d053083d11e1 = L.polyline(
+                [[-32.7121658, 151.5342115], [-32.7126395, 151.534489], [-32.7127238, 151.5345569], [-32.7128126, 151.5346545], [-32.7128855, 151.5347876], [-32.7129584, 151.5349793]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_99afb68fe82fc5697078bfed684cd654 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_dd18319528368c76ce9574a0995a4713 = $(`<div id="html_dd18319528368c76ce9574a0995a4713" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 31</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176351_346176370<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 118m<br>                     Direction: Forward<br>                     Coordinates: 6 points<br>                     Order in route: 31                     </div>`)[0];
+                popup_99afb68fe82fc5697078bfed684cd654.setContent(html_dd18319528368c76ce9574a0995a4713);
+            
+        
+
+        poly_line_11b082f4b3fd9c641629d053083d11e1.bindPopup(popup_99afb68fe82fc5697078bfed684cd654)
+        ;
+
+        
+    
+    
+            var poly_line_b2b9ae33c05263ed01d1dcbe8b7897e0 = L.polyline(
+                [[-32.7129584, 151.5349793], [-32.713112, 151.5354277], [-32.7131387, 151.5355396], [-32.7131973, 151.5359478]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_7b735cada20981641f82d27efa6ec70a = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_e79e8dccfe5d2e8a9b0751eddbda3c81 = $(`<div id="html_e79e8dccfe5d2e8a9b0751eddbda3c81" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 32</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176346_346176351<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 95m<br>                     Direction: Forward<br>                     Coordinates: 4 points<br>                     Order in route: 32                     </div>`)[0];
+                popup_7b735cada20981641f82d27efa6ec70a.setContent(html_e79e8dccfe5d2e8a9b0751eddbda3c81);
+            
+        
+
+        poly_line_b2b9ae33c05263ed01d1dcbe8b7897e0.bindPopup(popup_7b735cada20981641f82d27efa6ec70a)
+        ;
+
+        
+    
+    
+            var poly_line_85b0f20ac7a525d6c046ff4281c0d05b = L.polyline(
+                [[-32.7133727, 151.537196], [-32.7131973, 151.5359478]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_1977939ba19e2ad805b53a35fa5dd5d6 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_8e644d81d965f8794c43e1e78eaee1c6 = $(`<div id="html_8e644d81d965f8794c43e1e78eaee1c6" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 33</b><br>                     <b>Hague Street</b><br>                     Segment ID: 31133084_346176270_346176346<br>                     OSM ID: 31133084<br>                     Type: residential<br>                     Length: 118m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 33                     </div>`)[0];
+                popup_1977939ba19e2ad805b53a35fa5dd5d6.setContent(html_8e644d81d965f8794c43e1e78eaee1c6);
+            
+        
+
+        poly_line_85b0f20ac7a525d6c046ff4281c0d05b.bindPopup(popup_1977939ba19e2ad805b53a35fa5dd5d6)
+        ;
+
+        
+    
+    
+            var poly_line_3487f0581be30c34581c1e353294be65 = L.polyline(
+                [[-32.7124757, 151.537086], [-32.7125948, 151.5370555], [-32.7126968, 151.5370524], [-32.7127799, 151.5370685], [-32.7128724, 151.5370899], [-32.7130978, 151.5371808], [-32.7132064, 151.5372053], [-32.7132906, 151.5372089], [-32.7133727, 151.537196]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_fefed420d3922b13fc7744a234be317c = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_ea03b0afde420865889b99d5df2da94c = $(`<div id="html_ea03b0afde420865889b99d5df2da94c" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 34</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176270_346176273<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 102m<br>                     Direction: Forward<br>                     Coordinates: 9 points<br>                     Order in route: 34                     </div>`)[0];
+                popup_fefed420d3922b13fc7744a234be317c.setContent(html_ea03b0afde420865889b99d5df2da94c);
+            
+        
+
+        poly_line_3487f0581be30c34581c1e353294be65.bindPopup(popup_fefed420d3922b13fc7744a234be317c)
+        ;
+
+        
+    
+    
+            var poly_line_087b69098196177563452ef1442835aa = L.polyline(
+                [[-32.711893, 151.5371054], [-32.7119523, 151.5371288], [-32.712021, 151.5371456], [-32.7120869, 151.5371536], [-32.7121621, 151.5371543], [-32.7122292, 151.5371436], [-32.7124757, 151.537086]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_8c5a428efef0b3b491d8f4df8631e491 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_2ad405734bc730ddf5fa7c74c1208672 = $(`<div id="html_2ad405734bc730ddf5fa7c74c1208672" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 35</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176273_6272833061<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 66m<br>                     Direction: Forward<br>                     Coordinates: 7 points<br>                     Order in route: 35                     </div>`)[0];
+                popup_8c5a428efef0b3b491d8f4df8631e491.setContent(html_2ad405734bc730ddf5fa7c74c1208672);
+            
+        
+
+        poly_line_087b69098196177563452ef1442835aa.bindPopup(popup_8c5a428efef0b3b491d8f4df8631e491)
+        ;
+
+        
+    
+    
+            var poly_line_b55ba4a3977c105c0607ac0012fc115b = L.polyline(
+                [[-32.711893, 151.5371054], [-32.7118191, 151.5370805], [-32.7116977, 151.5370256], [-32.7116232, 151.5369746], [-32.7114946, 151.5368821], [-32.711382, 151.5368157], [-32.7112599, 151.5367614], [-32.7111504, 151.5367399], [-32.7110151, 151.5367382], [-32.710909, 151.5367453], [-32.7108153, 151.5367681], [-32.7107217, 151.536807], [-32.7106438, 151.5368459], [-32.7103414, 151.5370335]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_a69329b57239afe6d1b66a80d9ca3243 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_1f0dab8a5172ce0b5b1270e2b283d879 = $(`<div id="html_1f0dab8a5172ce0b5b1270e2b283d879" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 36</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176290_6272833061<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 186m<br>                     Direction: Forward<br>                     Coordinates: 14 points<br>                     Order in route: 36                     </div>`)[0];
+                popup_a69329b57239afe6d1b66a80d9ca3243.setContent(html_1f0dab8a5172ce0b5b1270e2b283d879);
+            
+        
+
+        poly_line_b55ba4a3977c105c0607ac0012fc115b.bindPopup(popup_a69329b57239afe6d1b66a80d9ca3243)
+        ;
+
+        
+    
+    
+            var poly_line_6513245038c44ac8abbd02ea9e71be09 = L.polyline(
+                [[-32.7106458, 151.5376097], [-32.7104908, 151.5373452], [-32.7103414, 151.5370335]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+        var popup_01c2a5e678d344e9fcf77a527b997d4b = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_8e3923db39aba1f7094a64e609b424b7 = $(`<div id="html_8e3923db39aba1f7094a64e609b424b7" style="width: 100.0%; height: 100.0%;">                     <b>Route 4 - Segment 37</b><br>                     <b>Ford Close</b><br>                     Segment ID: 31133078_346176290_346176330<br>                     OSM ID: 31133078<br>                     Type: residential<br>                     Length: 64m<br>                     Direction: Forward<br>                     Coordinates: 3 points<br>                     Order in route: 37                     </div>`)[0];
+                popup_01c2a5e678d344e9fcf77a527b997d4b.setContent(html_8e3923db39aba1f7094a64e609b424b7);
+            
+        
+
+        poly_line_6513245038c44ac8abbd02ea9e71be09.bindPopup(popup_01c2a5e678d344e9fcf77a527b997d4b)
+        ;
+
+        
+    
+    
+            var marker_9ca1727b474d68737274b657cc281c62 = L.marker(
+                [-32.7106458, 151.5376097],
+                {
+  "draggable": null,
+  "autoPan": null,
+}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+            var icon_490d354ba1b66518c8adb3aec574c7f0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "play",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+            marker_9ca1727b474d68737274b657cc281c62.setIcon(icon_490d354ba1b66518c8adb3aec574c7f0);
+        
+    
+        var popup_457269c8d85a35e95652551bec6f1723 = L.popup({
+  "maxWidth": "100%",
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_5c0e9198bc5660389e14fbbf5c7ff62f = $(`<div id="html_5c0e9198bc5660389e14fbbf5c7ff62f" style="width: 100.0%; height: 100.0%;">Route Start</div>`)[0];
+                popup_457269c8d85a35e95652551bec6f1723.setContent(html_5c0e9198bc5660389e14fbbf5c7ff62f);
+            
+        
+
+        marker_9ca1727b474d68737274b657cc281c62.bindPopup(popup_457269c8d85a35e95652551bec6f1723)
+        ;
+
+        
+    
+    
+            var marker_991a718ad7f53c5152e1295ad4b8a064 = L.marker(
+                [-32.7103414, 151.5370335],
+                {
+  "draggable": null,
+  "autoPan": null,
+}
+            ).addTo(map_246f46da4af51ff8a8f61bd142379c97);
+        
+    
+            var icon_3bd211f575595614fbe9d43c8ba282d9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "stop",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+            marker_991a718ad7f53c5152e1295ad4b8a064.setIcon(icon_3bd211f575595614fbe9d43c8ba282d9);
+        
+    
+        var popup_c4572a212fa353b5667525bbaf287b32 = L.popup({
+  "maxWidth": "100%",
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_4dc6dec686af17298b803e15c164014e = $(`<div id="html_4dc6dec686af17298b803e15c164014e" style="width: 100.0%; height: 100.0%;">Route End</div>`)[0];
+                popup_c4572a212fa353b5667525bbaf287b32.setContent(html_4dc6dec686af17298b803e15c164014e);
+            
+        
+
+        marker_991a718ad7f53c5152e1295ad4b8a064.bindPopup(popup_c4572a212fa353b5667525bbaf287b32)
+        ;
+
+        
+    
+</script>
+</html>

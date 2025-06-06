@@ -34,7 +34,7 @@ from database.utils import (
     get_user_activities,
     get_activity_gps_points
 )
-from database.models import User, RoadSegment, Route, route_segments
+from database.models import User, RoadSegment, Route, route_segments, Location
 from datetime import datetime, timezone
 from collections import defaultdict
 import csv
@@ -130,6 +130,7 @@ def display_menu(username):
     print("7. Visualize your running progress")
     print("8. Diagnose and fix road segment issues")
     print("9. Visualize all road segments in database")
+    print("10. Visualize specific route (debugging)")
     print("0. Reset database (WARNING: Deletes all data)")
     print("00. Exit")
     return input("\nSelect an option: ")
@@ -574,6 +575,48 @@ def process_location_routes(db, location):
         print("Syncing user road segments...")
         sync_user_road_segments(db, location.user_id)
         
+        # Export routes to CSV for debugging
+        print("Exporting routes data for debugging...")
+        try:
+            import csv
+            
+            routes_filename = f"routes_debug_{location.name.replace(' ', '_')}.csv"
+            
+            with open(routes_filename, 'w', newline='', encoding='utf-8') as csvfile:
+                fieldnames = ['route_id', 'route_name', 'total_segments', 'segments_with_geometry', 'segments_without_geometry', 'total_length_m', 'will_visualize']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                
+                for route in routes:
+                    segments = (
+                        db.query(RoadSegment, route_segments.c.direction, route_segments.c.segment_order)
+                        .join(route_segments)
+                        .filter(route_segments.c.route_id == route.id)
+                        .order_by(route_segments.c.segment_order)
+                        .all()
+                    )
+                    
+                    total_segments = len(segments)
+                    segments_with_geo = sum(1 for seg, _, _ in segments if seg.geometry)
+                    segments_without_geo = total_segments - segments_with_geo
+                    total_length = sum(seg.length for seg, _, _ in segments if seg.geometry)
+                    will_visualize = segments_with_geo > 0
+                    
+                    writer.writerow({
+                        'route_id': route.id,
+                        'route_name': route.name,
+                        'total_segments': total_segments,
+                        'segments_with_geometry': segments_with_geo,
+                        'segments_without_geometry': segments_without_geo,
+                        'total_length_m': total_length,
+                        'will_visualize': will_visualize
+                    })
+                
+                print(f"Exported route debugging data to '{routes_filename}'")
+                
+        except Exception as e:
+            print(f"Warning: Failed to export routes debug data: {str(e)}")
+        
         return True
         
     except Exception as e:
@@ -668,6 +711,36 @@ def visualize_location_data(db, location):
         
         print(f"Found {len(routes)} routes for this location")
         
+        # Debug: Check route-segments relationships
+        print("\n🔍 DEBUGGING ROUTE-SEGMENTS RELATIONSHIPS:")
+        routes_with_no_segments = []
+        routes_with_segments = []
+        
+        for route in routes:
+            # Count segments in route_segments table
+            segment_count = (
+                db.query(route_segments)
+                .filter(route_segments.c.route_id == route.id)
+                .count()
+            )
+            
+            if segment_count == 0:
+                routes_with_no_segments.append(route)
+                print(f"  ❌ Route {route.id} ({route.name}) has 0 segments in route_segments table")
+            else:
+                routes_with_segments.append(route)
+                print(f"  ✅ Route {route.id} ({route.name}) has {segment_count} segments")
+        
+        print(f"\nRoute-Segments Summary:")
+        print(f"  Routes with segments: {len(routes_with_segments)}")
+        print(f"  Routes missing segments: {len(routes_with_no_segments)}")
+        
+        if routes_with_no_segments:
+            print(f"\n⚠️  CRITICAL: {len(routes_with_no_segments)} routes have no segments!")
+            print("  This explains why they don't render. The route_segments table is missing entries.")
+            for route in routes_with_no_segments[:3]:  # Show first 3
+                print(f"    - Route {route.id}: {route.name}")
+        
         # Get all unique segments used by these routes
         all_route_segments = set()
         route_segment_data = {}
@@ -681,30 +754,46 @@ def visualize_location_data(db, location):
                 .all()
             )
             
+            # Debug: Check if route has segments
+            print(f"DEBUG: Route {route.id} ({route.name}) has {len(segments)} segments")
+            
             if segments:
                 route_segment_data[route.id] = segments
                 for segment, _, _ in segments:
                     all_route_segments.add(segment.segment_id)
+            else:
+                print(f"WARNING: Route {route.id} ({route.name}) has no segments!")
         
         print(f"Found {len(all_route_segments)} unique segments across all routes")
+        print(f"Routes with segments: {len(route_segment_data)}/{len(routes)}")
         
         # Check geometry data
         segments_with_geometry = 0
         segments_without_geometry = 0
+        routes_with_issues = []
         
         for route_id, segments in route_segment_data.items():
+            route_geometry_issues = 0
             for segment, _, _ in segments:
                 if segment.geometry:
                     segments_with_geometry += 1
                 else:
                     segments_without_geometry += 1
+                    route_geometry_issues += 1
+            
+            if route_geometry_issues > 0:
+                route_name = next(r.name for r in routes if r.id == route_id)
+                routes_with_issues.append(f"Route {route_id} ({route_name}): {route_geometry_issues} segments missing geometry")
         
         print(f"Segments with geometry: {segments_with_geometry}")
         print(f"Segments without geometry: {segments_without_geometry}")
         
-        if segments_without_geometry > 0:
-            print(f"⚠️  WARNING: {segments_without_geometry} segments missing geometry data!")
-            print("This will prevent complete visualization.")
+        if routes_with_issues:
+            print(f"\nRoutes with geometry issues:")
+            for issue in routes_with_issues[:5]:  # Show first 5
+                print(f"  {issue}")
+            if len(routes_with_issues) > 5:
+                print(f"  ... and {len(routes_with_issues) - 5} more routes with issues")
         
         if segments_with_geometry == 0:
             print("❌ No segments have geometry data. Cannot create visualization.")
@@ -751,9 +840,11 @@ def visualize_location_data(db, location):
         )
         
         # Add routes to map with different colors
-        colors = ['blue', 'red', 'green', 'purple', 'orange', 'darkred', 'lightred', 
-                 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 
-                 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
+        colors = ['#FF0000', '#00FF00', '#0000FF', '#FF00FF', '#FFFF00', '#00FFFF', 
+                 '#FF8000', '#8000FF', '#FF0080', '#80FF00', '#0080FF', '#FF8080', 
+                 '#80FF80', '#8080FF', '#FF4000', '#40FF00', '#4000FF', '#FF0040',
+                 '#00FF40', '#0040FF', '#FF2020', '#20FF20', '#2020FF', '#FFB000',
+                 '#B0FF00', '#B000FF', '#FF00B0', '#00FFB0', '#00B0FF', '#C0C0C0']
         
         total_route_distance = 0
         routes_visualized = 0
@@ -762,21 +853,51 @@ def visualize_location_data(db, location):
         # Create feature groups for each route (enables layer control)
         route_layers = {}
         
+        # Track rendering statistics
+        rendering_stats = {
+            'routes_attempted': 0,
+            'routes_with_segments': 0,
+            'routes_rendered_to_map': 0,
+            'total_polylines_created': 0,
+            'routes_skipped_no_geometry': 0,
+            'coordinate_errors': 0,
+            'feature_groups_created': 0,
+            'feature_groups_added_to_map': 0
+        }
+        
+        print(f"\n🔍 MULTI-ROUTE VISUALIZATION DEBUG:")
+        print(f"Processing {len(route_segment_data)} routes for visualization...")
+        
         for i, (route_id, segments) in enumerate(route_segment_data.items()):
+            rendering_stats['routes_attempted'] += 1
             color = colors[i % len(colors)]
             route = next(r for r in routes if r.id == route_id)
             
-            # Create a feature group for this route
-            route_layer = folium.FeatureGroup(name=f"Route {route_id} ({len(segments)} segments)")
-            route_layers[route_id] = route_layer
+            print(f"\n--- Route {route_id} Processing ---")
+            print(f"Route name: {route.name}")
+            print(f"Color assigned: {color}")
+            print(f"Segments to process: {len(segments)}")
             
-            print(f"  Processing route {route_id}: {len(segments)} segments")
+            # Create a feature group for this route
+            try:
+                route_layer = folium.FeatureGroup(name=f"Route {route_id} ({len(segments)} segments)")
+                route_layers[route_id] = route_layer
+                rendering_stats['feature_groups_created'] += 1
+                print(f"✅ Feature group created: {route_layer}")
+            except Exception as e:
+                print(f"❌ ERROR creating feature group: {str(e)}")
+                continue
             
             route_distance = 0
             route_segments_added = 0
+            route_segments_skipped = 0
+            polylines_created_for_route = 0
+            
+            rendering_stats['routes_with_segments'] += 1
             
             for segment, direction, order in segments:
                 if not segment.geometry:
+                    route_segments_skipped += 1
                     continue
                     
                 try:
@@ -784,6 +905,19 @@ def visualize_location_data(db, location):
                     
                     if hasattr(segment_line, 'coords'):
                         coords = [(coord[0], coord[1]) for coord in segment_line.coords]  # (lat, lon)
+                        
+                        # Validate coordinates
+                        valid_coords = True
+                        for lat, lon in coords:
+                            if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+                                valid_coords = False
+                                rendering_stats['coordinate_errors'] += 1
+                                print(f"    WARNING: Invalid coordinates for segment {segment.segment_id}: ({lat}, {lon})")
+                                break
+                        
+                        if not valid_coords:
+                            route_segments_skipped += 1
+                            continue
                         
                         # Create popup text
                         popup_text = f"""
@@ -797,34 +931,159 @@ def visualize_location_data(db, location):
                         """
                         
                         # Add line to the route's feature group instead of directly to map
-                        folium.PolyLine(
+                        polyline = folium.PolyLine(
                             locations=coords,
                             color=color,
                             weight=4,
                             opacity=0.7,
                             popup=folium.Popup(popup_text, max_width=300)
-                        ).add_to(route_layer)  # Add to route layer, not main map
+                        )
+                        polyline.add_to(route_layer)  # Add to route layer, not main map
                         
                         route_distance += segment.length
                         route_segments_added += 1
                         segments_visualized += 1
+                        polylines_created_for_route += 1
+                        rendering_stats['total_polylines_created'] += 1
                         
                 except Exception as e:
                     print(f"    Warning: Error processing segment {segment.segment_id}: {str(e)}")
+                    route_segments_skipped += 1
                     continue
             
             if route_segments_added > 0:
                 total_route_distance += route_distance
                 routes_visualized += 1
-                print(f"    ✓ Added {route_segments_added} segments ({route_distance/1000:.1f}km)")
+                print(f"    ✓ Added {route_segments_added} segments ({route_distance/1000:.1f}km) - {polylines_created_for_route} polylines created")
+                if route_segments_skipped > 0:
+                    print(f"    ⚠️  Skipped {route_segments_skipped} segments (no geometry)")
                 
                 # Add the route layer to the map
-                route_layer.add_to(m)
+                try:
+                    print(f"    🔧 Adding feature group to map...")
+                    print(f"       Feature group type: {type(route_layer)}")
+                    print(f"       Feature group name: {route_layer.layer_name if hasattr(route_layer, 'layer_name') else 'Unknown'}")
+                    print(f"       Polylines in group: {polylines_created_for_route}")
+                    
+                    route_layer.add_to(m)
+                    rendering_stats['routes_rendered_to_map'] += 1
+                    rendering_stats['feature_groups_added_to_map'] += 1
+                    print(f"    ✅ Route layer added to map successfully")
+                    
+                    # Verify the layer was actually added
+                    try:
+                        # Check if the layer appears in the map's children
+                        layer_found_in_map = False
+                        for child in m._children.values():
+                            if child == route_layer:
+                                layer_found_in_map = True
+                                break
+                        
+                        if layer_found_in_map:
+                            print(f"    ✅ Layer verified in map children")
+                        else:
+                            print(f"    ⚠️  Layer NOT found in map children")
+                    except Exception as e:
+                        print(f"    ⚠️  Could not verify layer in map: {str(e)}")
+                    
+                    # If route had some segments skipped, provide detail
+                    if route_segments_skipped > 0:
+                        print(f"    🔍 PARTIAL ROUTE ISSUES for Route {route_id}:")
+                        print(f"      Successfully added: {route_segments_added} segments")
+                        print(f"      Skipped segments: {route_segments_skipped}")
+                        
+                        # Show details of a few skipped segments
+                        skipped_count = 0
+                        for segment, direction, order in segments:
+                            if not segment.geometry and skipped_count < 2:  # Show first 2 skipped
+                                print(f"      Skipped segment {order}: {segment.segment_id} ({segment.name or 'Unnamed'}) - No geometry")
+                                skipped_count += 1
+                        
+                        if route_segments_skipped > 2:
+                            print(f"      ... and {route_segments_skipped - 2} more skipped segments")
+                    
+                except Exception as e:
+                    print(f"    ❌ ERROR: Failed to add route layer to map: {str(e)}")
+                    
+                    # If route layer failed to add, this is a critical issue
+                    print(f"    🔍 ROUTE LAYER FAILURE for Route {route_id}:")
+                    print(f"      Polylines created: {polylines_created_for_route}")
+                    print(f"      Route layer type: {type(route_layer)}")
+                    print(f"      Error details: {str(e)}")
+                    
+                    import traceback
+                    print(f"      Stack trace: {traceback.format_exc()}")
+                    print("")
             else:
-                print(f"    ✗ No segments could be visualized for route {route_id}")
+                print(f"    ✗ No segments could be visualized for route {route_id} (all {len(segments)} segments had issues)")
+                rendering_stats['routes_skipped_no_geometry'] += 1
+                
+                # Debug failed routes in detail
+                print(f"    🔍 DEBUGGING FAILED ROUTE {route_id}:")
+                print(f"      Route name: {route.name}")
+                print(f"      Total segments: {len(segments)}")
+                
+                for seg_idx, (segment, direction, order) in enumerate(segments[:3]):  # Check first 3 segments
+                    print(f"      Segment {seg_idx + 1} (Order {order}):")
+                    print(f"        Segment ID: {segment.segment_id}")
+                    print(f"        Name: {segment.name or 'Unnamed'}")
+                    print(f"        Has geometry: {segment.geometry is not None}")
+                    
+                    if segment.geometry:
+                        try:
+                            segment_line = to_shape(segment.geometry)
+                            print(f"        Geometry type: {type(segment_line).__name__}")
+                            
+                            if hasattr(segment_line, 'coords'):
+                                coords_list = list(segment_line.coords)
+                                print(f"        Coordinates count: {len(coords_list)}")
+                                
+                                if coords_list:
+                                    first_coord = coords_list[0]
+                                    last_coord = coords_list[-1]
+                                    print(f"        First coord: ({first_coord[0]:.6f}, {first_coord[1]:.6f})")
+                                    print(f"        Last coord: ({last_coord[0]:.6f}, {last_coord[1]:.6f})")
+                                    
+                                    # Check if coordinates are in reasonable bounds
+                                    for coord_idx, coord in enumerate(coords_list):
+                                        lat, lon = coord[0], coord[1]
+                                        if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+                                            print(f"        ❌ INVALID COORD at index {coord_idx}: ({lat}, {lon})")
+                                        elif abs(lat) < 0.001 or abs(lon) < 0.001:
+                                            print(f"        ⚠️  SUSPICIOUS COORD at index {coord_idx}: ({lat}, {lon}) (too close to 0,0)")
+                                else:
+                                    print(f"        ❌ NO COORDINATES in geometry")
+                            else:
+                                print(f"        ❌ GEOMETRY has no coords attribute")
+                                
+                        except Exception as e:
+                            print(f"        ❌ ERROR processing geometry: {str(e)}")
+                    else:
+                        print(f"        ❌ NO GEOMETRY DATA")
+                
+                if len(segments) > 3:
+                    print(f"      ... and {len(segments) - 3} more segments")
+                print(f"    🔍 END DEBUGGING ROUTE {route_id}")
+                print("")
         
         # Add layer control to toggle routes on/off
-        folium.LayerControl(collapsed=False).add_to(m)
+        print(f"\n🔧 Adding layer control...")
+        print(f"Feature groups created: {rendering_stats['feature_groups_created']}")
+        print(f"Feature groups added to map: {rendering_stats['feature_groups_added_to_map']}")
+        
+        try:
+            layer_control = folium.LayerControl(collapsed=False)
+            layer_control.add_to(m)
+            print(f"✅ Layer control added successfully")
+            
+            # List which routes should appear in layer control
+            print(f"\nRoutes that should appear in layer control:")
+            for route_id, route_layer in route_layers.items():
+                route_name = next(r.name for r in routes if r.id == route_id)
+                print(f"  - Route {route_id}: {route_name} (Layer: {route_layer.layer_name if hasattr(route_layer, 'layer_name') else 'Unknown'})")
+                
+        except Exception as e:
+            print(f"❌ ERROR adding layer control: {str(e)}")
         
         # Add legend
         legend_html = f'''
@@ -898,8 +1157,39 @@ def visualize_location_data(db, location):
                     });
                 };
                 
+                // Debug button to check layer visibility
+                var debugBtn = document.createElement('button');
+                debugBtn.innerHTML = 'Debug';
+                debugBtn.style.cssText = 'margin: 2px; font-size: 10px; padding: 3px 8px; cursor: pointer; background: #2196F3; color: white; border: none; border-radius: 3px;';
+                debugBtn.onclick = function() {
+                    console.log('=== LAYER DEBUG INFO ===');
+                    var checkboxes = document.querySelectorAll('.leaflet-control-layers input[type="checkbox"]');
+                    console.log('Total layer checkboxes found:', checkboxes.length);
+                    
+                    checkboxes.forEach(function(cb, index) {
+                        var label = cb.parentElement.textContent.trim();
+                        console.log(`Layer ${index + 1}: "${label}" - Checked: ${cb.checked}`);
+                    });
+                    
+                    // Check for polylines on the map
+                    var polylines = document.querySelectorAll('.leaflet-overlay-pane path');
+                    console.log('Total polylines in DOM:', polylines.length);
+                    
+                    // Check for invisible polylines
+                    var visiblePolylines = 0;
+                    polylines.forEach(function(path) {
+                        var style = window.getComputedStyle(path);
+                        if (style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0') {
+                            visiblePolylines++;
+                        }
+                    });
+                    console.log('Visible polylines:', visiblePolylines);
+                    console.log('=== END DEBUG INFO ===');
+                };
+                
                 buttonDiv.appendChild(allOnBtn);
                 buttonDiv.appendChild(allOffBtn);
+                buttonDiv.appendChild(debugBtn);
                 
                 // Try multiple insertion points
                 var insertPoint = layerControl.querySelector('form') || 
@@ -936,8 +1226,62 @@ def visualize_location_data(db, location):
         print(f"  🗺️  Routes visualized: {routes_visualized}/{len(routes)}")
         print(f"  📍 Segments shown: {segments_visualized}")
         print(f"  📏 Total distance: {total_route_distance/1000:.1f}km")
+        print(f"\n🔍 Detailed Rendering Statistics:")
+        print(f"  📈 Routes attempted: {rendering_stats['routes_attempted']}")
+        print(f"  📂 Routes with segments: {rendering_stats['routes_with_segments']}")
+        print(f"  🎛️  Feature groups created: {rendering_stats['feature_groups_created']}")
+        print(f"  🗺️  Feature groups added to map: {rendering_stats['feature_groups_added_to_map']}")
+        print(f"  ✅ Routes rendered to map: {rendering_stats['routes_rendered_to_map']}")
+        print(f"  📍 Total polylines created: {rendering_stats['total_polylines_created']}")
+        print(f"  ❌ Routes skipped (no geometry): {rendering_stats['routes_skipped_no_geometry']}")
+        print(f"  ⚠️  Coordinate errors: {rendering_stats['coordinate_errors']}")
         print(f"\n🗺️  Map saved as: {output_file}")
         print("   Open this file in your web browser to view the interactive map!")
+        
+        # Additional debugging info
+        if rendering_stats['routes_rendered_to_map'] < len(routes):
+            missing_routes = len(routes) - rendering_stats['routes_rendered_to_map']
+            print(f"\n⚠️  POTENTIAL ISSUE: {missing_routes} routes exist but weren't rendered to map")
+            print("   Possible causes:")
+            print("   - Routes have no segments with geometry")
+            print("   - Invalid coordinates in segments")
+            print("   - Errors during route layer creation")
+            print("   - Feature group creation/addition failures")
+            
+            # List the specific routes that failed
+            print(f"\n📋 SPECIFIC ROUTES THAT FAILED TO RENDER:")
+            rendered_route_ids = set()
+            for route_id in route_segment_data.keys():
+                # Check if this route was actually rendered
+                route_found_in_layers = False
+                for layer_route_id in route_layers.keys():
+                    if layer_route_id == route_id:
+                        route_found_in_layers = True
+                        break
+                
+                if route_found_in_layers:
+                    rendered_route_ids.add(route_id)
+            
+            failed_routes = [r for r in routes if r.id not in rendered_route_ids]
+            for route in failed_routes:
+                segments_count = len(db.query(route_segments).filter(route_segments.c.route_id == route.id).all())
+                print(f"   - Route {route.id}: '{route.name}' ({segments_count} segments)")
+        
+        # Check for feature group vs route rendering mismatches
+        if rendering_stats['feature_groups_created'] != rendering_stats['feature_groups_added_to_map']:
+            mismatch = rendering_stats['feature_groups_created'] - rendering_stats['feature_groups_added_to_map']
+            print(f"\n⚠️  FEATURE GROUP MISMATCH: {mismatch} feature groups created but not added to map")
+            print("   This suggests some routes failed during the map addition step")
+        
+        if rendering_stats['total_polylines_created'] == 0:
+            print(f"\n❌ CRITICAL: No polylines were created at all!")
+            print("   This suggests a fundamental issue with geometry processing")
+        
+        print(f"\n🎛️  Layer Control: Use the layer control in the top-right of the map to toggle routes on/off")
+        print(f"   If routes appear in layer control but aren't visible, try:")
+        print(f"   1. Zooming out to ensure routes are in view")
+        print(f"   2. Checking if routes are hidden behind other routes")
+        print(f"   3. Using browser developer tools to check for JavaScript errors")
         
     except Exception as e:
         print(f"\nError creating route visualization: {str(e)}")
@@ -1790,8 +2134,39 @@ def visualize_user_progress(db, user):
                     });
                 };
                 
+                // Debug button to check layer visibility
+                var debugBtn = document.createElement('button');
+                debugBtn.innerHTML = 'Debug';
+                debugBtn.style.cssText = 'margin: 2px; font-size: 10px; padding: 3px 8px; cursor: pointer; background: #2196F3; color: white; border: none; border-radius: 3px;';
+                debugBtn.onclick = function() {
+                    console.log('=== LAYER DEBUG INFO ===');
+                    var checkboxes = document.querySelectorAll('.leaflet-control-layers input[type="checkbox"]');
+                    console.log('Total layer checkboxes found:', checkboxes.length);
+                    
+                    checkboxes.forEach(function(cb, index) {
+                        var label = cb.parentElement.textContent.trim();
+                        console.log(`Layer ${index + 1}: "${label}" - Checked: ${cb.checked}`);
+                    });
+                    
+                    // Check for polylines on the map
+                    var polylines = document.querySelectorAll('.leaflet-overlay-pane path');
+                    console.log('Total polylines in DOM:', polylines.length);
+                    
+                    // Check for invisible polylines
+                    var visiblePolylines = 0;
+                    polylines.forEach(function(path) {
+                        var style = window.getComputedStyle(path);
+                        if (style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0') {
+                            visiblePolylines++;
+                        }
+                    });
+                    console.log('Visible polylines:', visiblePolylines);
+                    console.log('=== END DEBUG INFO ===');
+                };
+                
                 buttonDiv.appendChild(allOnBtn);
                 buttonDiv.appendChild(allOffBtn);
+                buttonDiv.appendChild(debugBtn);
                 
                 // Try multiple insertion points
                 var insertPoint = layerControl.querySelector('form') || 
@@ -1986,6 +2361,38 @@ def diagnose_road_segments(db, user):
     else:
         print("✅ Everything looks good!")
         print("   Use: Menu option 7 to visualize your progress")
+    
+    # Check for broken route-segment relationships
+    print("\n=== Route Visualization Issues ===")
+    if user.locations:
+        location = user.locations[0]  # Check first location
+        routes = db.query(Route).filter(Route.location_id == location.id).all()
+        
+        if routes:
+            routes_with_no_segments = []
+            for route in routes:
+                segment_count = (
+                    db.query(route_segments)
+                    .filter(route_segments.c.route_id == route.id)
+                    .count()
+                )
+                if segment_count == 0:
+                    routes_with_no_segments.append(route)
+            
+            if routes_with_no_segments:
+                print(f"⚠️  Found {len(routes_with_no_segments)} routes with broken segment relationships")
+                print("   This explains why some routes don't visualize")
+                
+                fix_choice = input(f"\n   Fix broken route relationships for {location.name}? (y/n): ")
+                if fix_choice.lower() == 'y':
+                    if fix_broken_route_segments(db, location.id):
+                        print("✅ Route relationships fixed!")
+                    else:
+                        print("❌ Failed to fix route relationships")
+            else:
+                print("✅ All routes have proper segment relationships")
+        else:
+            print("ℹ️  No routes found to check")
 
 def visualize_all_road_segments(db):
     """Visualize all road segments in the database"""
@@ -2151,6 +2558,354 @@ def visualize_all_road_segments(db):
         import traceback
         traceback.print_exc()
 
+def fix_broken_route_segments(db, location_id):
+    """
+    Fix routes that exist but have no segments in the route_segments table
+    This can happen due to transaction issues during route creation
+    """
+    print("\n=== Fixing Broken Route-Segment Relationships ===")
+    
+    # Find routes with no segments
+    routes = db.query(Route).filter(Route.location_id == location_id).all()
+    
+    routes_fixed = 0
+    routes_failed = 0
+    
+    for route in routes:
+        segment_count = (
+            db.query(route_segments)
+            .filter(route_segments.c.route_id == route.id)
+            .count()
+        )
+        
+        if segment_count == 0:
+            print(f"\n🔧 Attempting to fix Route {route.id}: {route.name}")
+            
+            # Check if this route has any data we can recover
+            # Look for similar routes or try to regenerate
+            print(f"   Route has {getattr(route, 'node_count', 'unknown')} nodes")
+            print(f"   Route distance: {getattr(route, 'distance', 'unknown')}m")
+            
+            # For now, mark these routes for deletion since they're broken
+            print(f"   ❌ Route {route.id} cannot be recovered - marking for deletion")
+            routes_failed += 1
+    
+    if routes_failed > 0:
+        print(f"\n⚠️  Found {routes_failed} broken routes that cannot be fixed.")
+        print("   Recommendation: Delete these routes and re-process the location")
+        
+        delete_broken = input(f"\n   Delete {routes_failed} broken routes? (y/n): ")
+        if delete_broken.lower() == 'y':
+            for route in routes:
+                segment_count = (
+                    db.query(route_segments)
+                    .filter(route_segments.c.route_id == route.id)
+                    .count()
+                )
+                
+                if segment_count == 0:
+                    print(f"   Deleting broken route {route.id}: {route.name}")
+                    db.delete(route)
+                    routes_fixed += 1
+            
+            try:
+                db.commit()
+                print(f"\n✅ Successfully deleted {routes_fixed} broken routes")
+                
+                # Update location route count
+                location = db.query(Location).filter(Location.id == location_id).first()
+                if location:
+                    remaining_routes = db.query(Route).filter(Route.location_id == location_id).count()
+                    location.route_count = remaining_routes
+                    db.commit()
+                    print(f"   Updated location route count to {remaining_routes}")
+                
+            except Exception as e:
+                print(f"   ❌ Error deleting routes: {str(e)}")
+                db.rollback()
+                return False
+        else:
+            print("   Deletion cancelled.")
+    
+    return routes_fixed > 0
+
+def visualize_specific_route(db, user):
+    """Visualize a specific route with detailed debugging"""
+    print("\n=== Visualize Specific Route ===")
+    
+    # First, let user select a location
+    location = select_location(db, user)
+    if not location:
+        return
+    
+    # Get all routes for this location
+    routes = db.query(Route).filter(Route.location_id == location.id).all()
+    
+    if not routes:
+        print(f"No routes found for location: {location.name}")
+        return
+    
+    print(f"\nFound {len(routes)} routes for {location.name}:")
+    for i, route in enumerate(routes, 1):
+        segment_count = (
+            db.query(route_segments)
+            .filter(route_segments.c.route_id == route.id)
+            .count()
+        )
+        distance_info = f" - {route.distance/1000:.1f}km" if hasattr(route, 'distance') and route.distance else ""
+        print(f"{i}. Route {route.id}: {route.name} ({segment_count} segments){distance_info}")
+    
+    # Let user select a specific route
+    while True:
+        choice = input(f"\nSelect route number to visualize (1-{len(routes)}, or 0 to go back): ")
+        if choice == "0":
+            return
+        
+        try:
+            index = int(choice) - 1
+            if 0 <= index < len(routes):
+                selected_route = routes[index]
+                break
+        except ValueError:
+            pass
+        
+        print("Invalid selection. Please try again.")
+    
+    print(f"\n🔍 DETAILED ROUTE ANALYSIS: Route {selected_route.id}")
+    print(f"Route Name: {selected_route.name}")
+    
+    try:
+        # Get route segments with detailed info
+        segments = (
+            db.query(RoadSegment, route_segments.c.direction, route_segments.c.segment_order)
+            .join(route_segments)
+            .filter(route_segments.c.route_id == selected_route.id)
+            .order_by(route_segments.c.segment_order)
+            .all()
+        )
+        
+        print(f"Total segments in route: {len(segments)}")
+        
+        if not segments:
+            print("❌ No segments found for this route!")
+            return
+        
+        # Analyze each segment
+        from geoalchemy2.shape import to_shape
+        import folium
+        import numpy as np
+        
+        print("\n📊 SEGMENT ANALYSIS:")
+        segments_with_geometry = 0
+        segments_without_geometry = 0
+        invalid_coordinates = 0
+        total_length = 0
+        coordinate_bounds = {'min_lat': float('inf'), 'max_lat': float('-inf'), 
+                           'min_lon': float('inf'), 'max_lon': float('-inf')}
+        
+        for i, (segment, direction, order) in enumerate(segments):
+            print(f"\nSegment {i+1} (Order {order}):")
+            print(f"  Segment ID: {segment.segment_id}")
+            print(f"  Name: {segment.name or 'Unnamed'}")
+            print(f"  Type: {segment.road_type or 'Unknown'}")
+            print(f"  Length: {segment.length:.1f}m")
+            print(f"  Direction: {'Forward' if direction else 'Reverse'}")
+            print(f"  Has geometry: {segment.geometry is not None}")
+            
+            if segment.geometry:
+                segments_with_geometry += 1
+                try:
+                    segment_line = to_shape(segment.geometry)
+                    
+                    if hasattr(segment_line, 'coords'):
+                        coords_list = list(segment_line.coords)
+                        print(f"  Coordinates: {len(coords_list)} points")
+                        
+                        if coords_list:
+                            first_coord = coords_list[0]
+                            last_coord = coords_list[-1]
+                            print(f"  Start: ({first_coord[0]:.6f}, {first_coord[1]:.6f})")
+                            print(f"  End: ({last_coord[0]:.6f}, {last_coord[1]:.6f})")
+                            
+                            # Track coordinate bounds
+                            for coord in coords_list:
+                                lat, lon = coord[0], coord[1]
+                                if -90 <= lat <= 90 and -180 <= lon <= 180:
+                                    coordinate_bounds['min_lat'] = min(coordinate_bounds['min_lat'], lat)
+                                    coordinate_bounds['max_lat'] = max(coordinate_bounds['max_lat'], lat)
+                                    coordinate_bounds['min_lon'] = min(coordinate_bounds['min_lon'], lon)
+                                    coordinate_bounds['max_lon'] = max(coordinate_bounds['max_lon'], lon)
+                                else:
+                                    invalid_coordinates += 1
+                                    print(f"  ❌ INVALID COORD: ({lat}, {lon})")
+                            
+                            total_length += segment.length
+                        else:
+                            print(f"  ❌ NO COORDINATES in geometry")
+                            segments_without_geometry += 1
+                    else:
+                        print(f"  ❌ GEOMETRY has no coords attribute")
+                        segments_without_geometry += 1
+                        
+                except Exception as e:
+                    print(f"  ❌ ERROR processing geometry: {str(e)}")
+                    segments_without_geometry += 1
+            else:
+                segments_without_geometry += 1
+        
+        print(f"\n📈 ROUTE SUMMARY:")
+        print(f"  Segments with geometry: {segments_with_geometry}")
+        print(f"  Segments without geometry: {segments_without_geometry}")
+        print(f"  Invalid coordinates found: {invalid_coordinates}")
+        print(f"  Total route length: {total_length/1000:.2f}km")
+        
+        if coordinate_bounds['min_lat'] != float('inf'):
+            print(f"  Coordinate bounds:")
+            print(f"    Latitude: {coordinate_bounds['min_lat']:.6f} to {coordinate_bounds['max_lat']:.6f}")
+            print(f"    Longitude: {coordinate_bounds['min_lon']:.6f} to {coordinate_bounds['max_lon']:.6f}")
+            
+            # Calculate center point
+            center_lat = (coordinate_bounds['min_lat'] + coordinate_bounds['max_lat']) / 2
+            center_lon = (coordinate_bounds['min_lon'] + coordinate_bounds['max_lon']) / 2
+            print(f"    Center: ({center_lat:.6f}, {center_lon:.6f})")
+        
+        if segments_with_geometry == 0:
+            print("❌ Cannot create visualization - no segments have geometry")
+            return
+        
+        # Create single-route visualization
+        print(f"\n🗺️  Creating visualization for Route {selected_route.id}...")
+        
+        # Use coordinate bounds to center map
+        if coordinate_bounds['min_lat'] != float('inf'):
+            map_center = [center_lat, center_lon]
+        else:
+            map_center = [location.latitude, location.longitude]
+        
+        m = folium.Map(
+            location=map_center,
+            zoom_start=15,
+            tiles='OpenStreetMap'
+        )
+        
+        # Add route segments
+        segments_rendered = 0
+        segments_skipped = 0
+        
+        for i, (segment, direction, order) in enumerate(segments):
+            if not segment.geometry:
+                segments_skipped += 1
+                continue
+                
+            try:
+                segment_line = to_shape(segment.geometry)
+                
+                if hasattr(segment_line, 'coords'):
+                    coords = [(coord[0], coord[1]) for coord in segment_line.coords]
+                    
+                    # Create detailed popup
+                    popup_text = f"""
+                    <b>Route {selected_route.id} - Segment {order}</b><br>
+                    <b>{segment.name or 'Unnamed Road'}</b><br>
+                    Segment ID: {segment.segment_id}<br>
+                    OSM ID: {segment.osm_id}<br>
+                    Type: {segment.road_type or 'Unknown'}<br>
+                    Length: {segment.length:.0f}m<br>
+                    Direction: {'Forward' if direction else 'Reverse'}<br>
+                    Coordinates: {len(coords)} points<br>
+                    Order in route: {order}
+                    """
+                    
+                    # Color segments differently based on order for debugging
+                    if i < len(segments) * 0.33:
+                        color = '#FF0000'  # Bright red
+                    elif i < len(segments) * 0.66:
+                        color = '#FF8000'  # Bright orange
+                    else:
+                        color = '#00FF00'  # Bright green
+                    
+                    folium.PolyLine(
+                        locations=coords,
+                        color=color,
+                        weight=6,
+                        opacity=0.8,
+                        popup=folium.Popup(popup_text, max_width=400)
+                    ).add_to(m)
+                    
+                    segments_rendered += 1
+                    
+            except Exception as e:
+                print(f"  Warning: Error rendering segment {segment.segment_id}: {str(e)}")
+                segments_skipped += 1
+                continue
+        
+        # Add start and end markers
+        if segments and segments[0][0].geometry:
+            try:
+                first_segment_line = to_shape(segments[0][0].geometry)
+                if hasattr(first_segment_line, 'coords'):
+                    first_coords = list(first_segment_line.coords)
+                    if first_coords:
+                        start_coord = first_coords[0]
+                        folium.Marker(
+                            location=[start_coord[0], start_coord[1]],
+                            popup="Route Start",
+                            icon=folium.Icon(color='green', icon='play')
+                        ).add_to(m)
+            except:
+                pass
+        
+        if segments and segments[-1][0].geometry:
+            try:
+                last_segment_line = to_shape(segments[-1][0].geometry)
+                if hasattr(last_segment_line, 'coords'):
+                    last_coords = list(last_segment_line.coords)
+                    if last_coords:
+                        end_coord = last_coords[-1]
+                        folium.Marker(
+                            location=[end_coord[0], end_coord[1]],
+                            popup="Route End",
+                            icon=folium.Icon(color='red', icon='stop')
+                        ).add_to(m)
+            except:
+                pass
+        
+        # Add legend
+        legend_html = f'''
+        <div style="position: fixed; 
+                    bottom: 10px; left: 10px; width: 250px; height: 180px;
+                    border:2px solid grey; z-index:9999; background-color:white;
+                    padding: 8px; font-size: 12px;">
+            <h5 style="margin-top:0; margin-bottom:5px">Route {selected_route.id} Debug</h5>
+            <p style="margin:2px 0"><b>Name:</b> {selected_route.name}</p>
+            <p style="margin:2px 0"><b>Total segments:</b> {len(segments)}</p>
+            <p style="margin:2px 0"><b>Rendered:</b> {segments_rendered}</p>
+            <p style="margin:2px 0"><b>Skipped:</b> {segments_skipped}</p>
+            <p style="margin:2px 0"><b>Length:</b> {total_length/1000:.2f}km</p>
+            <p style="margin:2px 0; color: #FF0000"><b>Red:</b> Start segments</p>
+            <p style="margin:2px 0; color: #FF8000"><b>Orange:</b> Middle segments</p>
+            <p style="margin:2px 0; color: #00FF00"><b>Green:</b> End segments</p>
+        </div>
+        '''
+        m.get_root().html.add_child(folium.Element(legend_html))
+        
+        # Save the map
+        output_file = f'route_{selected_route.id}_debug.html'
+        m.save(output_file)
+        
+        print(f"\n✅ Route visualization created!")
+        print(f"📊 Rendering Results:")
+        print(f"  Segments rendered: {segments_rendered}/{len(segments)}")
+        print(f"  Segments skipped: {segments_skipped}")
+        print(f"🗺️  Map saved as: {output_file}")
+        print("   Open this file to see the detailed route visualization")
+        print("   Segments are color-coded by position: Red (start) → Orange (middle) → Green (end)")
+        
+    except Exception as e:
+        print(f"\nError creating route visualization: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
 def main():
     # Get user information
     username = input("Enter username (or new username to register): ")
@@ -2222,6 +2977,9 @@ def main():
                 
             elif choice == "9":
                 visualize_all_road_segments(db)
+                
+            elif choice == "10":
+                visualize_specific_route(db, user)
                 
             else:
                 print("\nInvalid option. Please try again.")

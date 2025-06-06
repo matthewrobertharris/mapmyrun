@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_dbddb6204db012f1257fad50ba9d68d5 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+        <div style="position: fixed; 
+                    bottom: 10px; left: 10px; width: 250px; height: 180px;
+                    border:2px solid grey; z-index:9999; background-color:white;
+                    padding: 8px; font-size: 12px;">
+            <h5 style="margin-top:0; margin-bottom:5px">Route 38 Debug</h5>
+            <p style="margin:2px 0"><b>Name:</b> Route 38 from Ford</p>
+            <p style="margin:2px 0"><b>Total segments:</b> 30</p>
+            <p style="margin:2px 0"><b>Rendered:</b> 30</p>
+            <p style="margin:2px 0"><b>Skipped:</b> 0</p>
+            <p style="margin:2px 0"><b>Length:</b> 3.94km</p>
+            <p style="margin:2px 0; color: red"><b>Red:</b> Start segments</p>
+            <p style="margin:2px 0; color: orange"><b>Orange:</b> Middle segments</p>
+            <p style="margin:2px 0; color: green"><b>Green:</b> End segments</p>
+        </div>
+        
+    
+            <div class="folium-map" id="map_dbddb6204db012f1257fad50ba9d68d5" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_dbddb6204db012f1257fad50ba9d68d5 = L.map(
+                "map_dbddb6204db012f1257fad50ba9d68d5",
+                {
+                    center: [-32.70988615, 151.53829789999998],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "maxBounds": null,
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_3be4d015e55211b250887ef14554f2c2 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_3be4d015e55211b250887ef14554f2c2.addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+            var poly_line_588a1f2063958c2b509b7a11196b9d03 = L.polyline(
+                [[-32.7106458, 151.5376097], [-32.7104908, 151.5373452], [-32.7103414, 151.5370335]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_79b56da3cfb75bfa4f0ccceb48cb080d = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_ab6cbdc50706551605db39b7d0cc0983 = $(`<div id="html_ab6cbdc50706551605db39b7d0cc0983" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 0</b><br>                     <b>Ford Close</b><br>                     Segment ID: 31133078_346176290_346176330<br>                     OSM ID: 31133078<br>                     Type: residential<br>                     Length: 64m<br>                     Direction: Forward<br>                     Coordinates: 3 points<br>                     Order in route: 0                     </div>`)[0];
+                popup_79b56da3cfb75bfa4f0ccceb48cb080d.setContent(html_ab6cbdc50706551605db39b7d0cc0983);
+            
+        
+
+        poly_line_588a1f2063958c2b509b7a11196b9d03.bindPopup(popup_79b56da3cfb75bfa4f0ccceb48cb080d)
+        ;
+
+        
+    
+    
+            var poly_line_5525dad094bb58002eca75b3a84cc3ed = L.polyline(
+                [[-32.711893, 151.5371054], [-32.7118191, 151.5370805], [-32.7116977, 151.5370256], [-32.7116232, 151.5369746], [-32.7114946, 151.5368821], [-32.711382, 151.5368157], [-32.7112599, 151.5367614], [-32.7111504, 151.5367399], [-32.7110151, 151.5367382], [-32.710909, 151.5367453], [-32.7108153, 151.5367681], [-32.7107217, 151.536807], [-32.7106438, 151.5368459], [-32.7103414, 151.5370335]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_ea8ec81350024fcc8a95534e845ddb53 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_1bcd8721a55ce2dcfcba57a92c792fd7 = $(`<div id="html_1bcd8721a55ce2dcfcba57a92c792fd7" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 1</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176290_6272833061<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 186m<br>                     Direction: Forward<br>                     Coordinates: 14 points<br>                     Order in route: 1                     </div>`)[0];
+                popup_ea8ec81350024fcc8a95534e845ddb53.setContent(html_1bcd8721a55ce2dcfcba57a92c792fd7);
+            
+        
+
+        poly_line_5525dad094bb58002eca75b3a84cc3ed.bindPopup(popup_ea8ec81350024fcc8a95534e845ddb53)
+        ;
+
+        
+    
+    
+            var poly_line_8b372343d384c5b8da7e249608cf971d = L.polyline(
+                [[-32.711893, 151.5371054], [-32.7119523, 151.5371288], [-32.712021, 151.5371456], [-32.7120869, 151.5371536], [-32.7121621, 151.5371543], [-32.7122292, 151.5371436], [-32.7124757, 151.537086]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_80e3fd3e6899a1afbd16e41f675b9bb9 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_fa9b829564518758a53dd2ed69a8ffc2 = $(`<div id="html_fa9b829564518758a53dd2ed69a8ffc2" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 2</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176273_6272833061<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 66m<br>                     Direction: Forward<br>                     Coordinates: 7 points<br>                     Order in route: 2                     </div>`)[0];
+                popup_80e3fd3e6899a1afbd16e41f675b9bb9.setContent(html_fa9b829564518758a53dd2ed69a8ffc2);
+            
+        
+
+        poly_line_8b372343d384c5b8da7e249608cf971d.bindPopup(popup_80e3fd3e6899a1afbd16e41f675b9bb9)
+        ;
+
+        
+    
+    
+            var poly_line_d77fac21c54ed56b95a62edea05abcd6 = L.polyline(
+                [[-32.7124757, 151.537086], [-32.7125948, 151.5370555], [-32.7126968, 151.5370524], [-32.7127799, 151.5370685], [-32.7128724, 151.5370899], [-32.7130978, 151.5371808], [-32.7132064, 151.5372053], [-32.7132906, 151.5372089], [-32.7133727, 151.537196]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_02a70846bbb9f6afb28d433938230a46 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_7680d9cbdaccc5c88783a9f2c7bf1c14 = $(`<div id="html_7680d9cbdaccc5c88783a9f2c7bf1c14" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 3</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176270_346176273<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 102m<br>                     Direction: Forward<br>                     Coordinates: 9 points<br>                     Order in route: 3                     </div>`)[0];
+                popup_02a70846bbb9f6afb28d433938230a46.setContent(html_7680d9cbdaccc5c88783a9f2c7bf1c14);
+            
+        
+
+        poly_line_d77fac21c54ed56b95a62edea05abcd6.bindPopup(popup_02a70846bbb9f6afb28d433938230a46)
+        ;
+
+        
+    
+    
+            var poly_line_01587602058bcd117bec85909e7a8d69 = L.polyline(
+                [[-32.7133727, 151.537196], [-32.7136532, 151.5371543], [-32.7138451, 151.5371087], [-32.7138995, 151.5370856], [-32.7139444, 151.5370591], [-32.7142493, 151.5368252]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_a83415a0345e1bda40f66b512efde212 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_ee543ac874da07c366d75fd3daa3cc24 = $(`<div id="html_ee543ac874da07c366d75fd3daa3cc24" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 4</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176268_346176270<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 106m<br>                     Direction: Forward<br>                     Coordinates: 6 points<br>                     Order in route: 4                     </div>`)[0];
+                popup_a83415a0345e1bda40f66b512efde212.setContent(html_ee543ac874da07c366d75fd3daa3cc24);
+            
+        
+
+        poly_line_01587602058bcd117bec85909e7a8d69.bindPopup(popup_a83415a0345e1bda40f66b512efde212)
+        ;
+
+        
+    
+    
+            var poly_line_753dcb74b45fe254e0e7f19905d8eafd = L.polyline(
+                [[-32.7142493, 151.5368252], [-32.7145142, 151.5366366], [-32.7145469, 151.5366232], [-32.7145852, 151.5366125], [-32.7148331, 151.5365756], [-32.7149002, 151.5365656]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_90c3f217a2d4661ed3ab2fd828511074 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_04b1f2780e1ffa6d6274c6d1e70b9cb3 = $(`<div id="html_04b1f2780e1ffa6d6274c6d1e70b9cb3" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 5</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346174690_346176268<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 78m<br>                     Direction: Forward<br>                     Coordinates: 6 points<br>                     Order in route: 5                     </div>`)[0];
+                popup_90c3f217a2d4661ed3ab2fd828511074.setContent(html_04b1f2780e1ffa6d6274c6d1e70b9cb3);
+            
+        
+
+        poly_line_753dcb74b45fe254e0e7f19905d8eafd.bindPopup(popup_90c3f217a2d4661ed3ab2fd828511074)
+        ;
+
+        
+    
+    
+            var poly_line_3c1e06cb1e8af3bf448dcf41e7b05cac = L.polyline(
+                [[-32.7149002, 151.5365656], [-32.7149175, 151.5366561], [-32.7149317, 151.5367305], [-32.7149554, 151.536815], [-32.7149971, 151.536925], [-32.7150383, 151.537019], [-32.7150814, 151.5371034], [-32.7151213, 151.5371798], [-32.7151259, 151.5371947], [-32.7151384, 151.5372353], [-32.7151501, 151.5373098]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_25dd10d9468477f14464d0e77e2eb5d9 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_a06586d82cf99f5addea676e1655b598 = $(`<div id="html_a06586d82cf99f5addea676e1655b598" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 6</b><br>                     <b>Alexandra Avenue</b><br>                     Segment ID: 31132970_346174575_346174690<br>                     OSM ID: 31132970<br>                     Type: secondary<br>                     Length: 76m<br>                     Direction: Forward<br>                     Coordinates: 11 points<br>                     Order in route: 6                     </div>`)[0];
+                popup_25dd10d9468477f14464d0e77e2eb5d9.setContent(html_a06586d82cf99f5addea676e1655b598);
+            
+        
+
+        poly_line_3c1e06cb1e8af3bf448dcf41e7b05cac.bindPopup(popup_25dd10d9468477f14464d0e77e2eb5d9)
+        ;
+
+        
+    
+    
+            var poly_line_f4d6b07014f34798e3b46f3c231d4a5d = L.polyline(
+                [[-32.7151501, 151.5373098], [-32.7151422, 151.5373427]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_b4b292a867b6be669df026af148ed661 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_21dbb721763db2b7108549c4218a60ca = $(`<div id="html_21dbb721763db2b7108549c4218a60ca" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 7</b><br>                     <b>Unnamed Road</b><br>                     Segment ID: 31132964_346174575_6272833016<br>                     OSM ID: 31132964<br>                     Type: secondary<br>                     Length: 3m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 7                     </div>`)[0];
+                popup_b4b292a867b6be669df026af148ed661.setContent(html_21dbb721763db2b7108549c4218a60ca);
+            
+        
+
+        poly_line_f4d6b07014f34798e3b46f3c231d4a5d.bindPopup(popup_b4b292a867b6be669df026af148ed661)
+        ;
+
+        
+    
+    
+            var poly_line_1f816b250470f9332a97e2b5bec7d064 = L.polyline(
+                [[-32.7151422, 151.5373427], [-32.7150634, 151.5374137], [-32.7149202, 151.5375426]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_91bcc5c5456afd9ac5a2ab859ba5a838 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_eb166a1ea607541fd1c6b03ea6838b9a = $(`<div id="html_eb166a1ea607541fd1c6b03ea6838b9a" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 8</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 669796066_6272833016_6272833017<br>                     OSM ID: 669796066<br>                     Type: secondary<br>                     Length: 31m<br>                     Direction: Forward<br>                     Coordinates: 3 points<br>                     Order in route: 8                     </div>`)[0];
+                popup_91bcc5c5456afd9ac5a2ab859ba5a838.setContent(html_eb166a1ea607541fd1c6b03ea6838b9a);
+            
+        
+
+        poly_line_1f816b250470f9332a97e2b5bec7d064.bindPopup(popup_91bcc5c5456afd9ac5a2ab859ba5a838)
+        ;
+
+        
+    
+    
+            var poly_line_e5994ebfd0211977d509bdc9dfb7aa3d = L.polyline(
+                [[-32.7149202, 151.5375426], [-32.7144819, 151.5378163], [-32.7141124, 151.538047], [-32.7125984, 151.538347], [-32.7103188, 151.5387815]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_1b0fb9acd287e77423097584f9226254 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_833d9ab8d41b6ebfe3f3ed30658fbfbc = $(`<div id="html_833d9ab8d41b6ebfe3f3ed30658fbfbc" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 9</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_346174964_6272833017<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 529m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 9                     </div>`)[0];
+                popup_1b0fb9acd287e77423097584f9226254.setContent(html_833d9ab8d41b6ebfe3f3ed30658fbfbc);
+            
+        
+
+        poly_line_e5994ebfd0211977d509bdc9dfb7aa3d.bindPopup(popup_1b0fb9acd287e77423097584f9226254)
+        ;
+
+        
+    
+    
+            var poly_line_47b19695de37a5e73c0703e388fbb1c6 = L.polyline(
+                [[-32.7103188, 151.5387815], [-32.70984, 151.5389416]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_d6128f0cdafc84a2b39efb4ca2de1d40 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_0eb3b3a5824e6e90cca604509c5145d5 = $(`<div id="html_0eb3b3a5824e6e90cca604509c5145d5" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 10</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_346174964_808745998<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 55m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 10                     </div>`)[0];
+                popup_d6128f0cdafc84a2b39efb4ca2de1d40.setContent(html_0eb3b3a5824e6e90cca604509c5145d5);
+            
+        
+
+        poly_line_47b19695de37a5e73c0703e388fbb1c6.bindPopup(popup_d6128f0cdafc84a2b39efb4ca2de1d40)
+        ;
+
+        
+    
+    
+            var poly_line_d4eef8707fa159b2c6e000e30a288ff0 = L.polyline(
+                [[-32.70984, 151.5389416], [-32.70828, 151.5394699]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_54c3173ef57a1c26a7cc2bfb3737bc22 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_77d4c46cdf2c89cc67c4525f6a957ca8 = $(`<div id="html_77d4c46cdf2c89cc67c4525f6a957ca8" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 11</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_808745998_808746027<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 180m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 11                     </div>`)[0];
+                popup_54c3173ef57a1c26a7cc2bfb3737bc22.setContent(html_77d4c46cdf2c89cc67c4525f6a957ca8);
+            
+        
+
+        poly_line_d4eef8707fa159b2c6e000e30a288ff0.bindPopup(popup_54c3173ef57a1c26a7cc2bfb3737bc22)
+        ;
+
+        
+    
+    
+            var poly_line_84440bdb0cdf13a50c9e24df5231bd1c = L.polyline(
+                [[-32.707977, 151.5395635], [-32.70828, 151.5394699]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_77990f04bdda15252c80f7e0f728bd22 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_423355b8fd5d6201983abecf1844abea = $(`<div id="html_423355b8fd5d6201983abecf1844abea" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 12</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_346179419_808746027<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 35m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 12                     </div>`)[0];
+                popup_77990f04bdda15252c80f7e0f728bd22.setContent(html_423355b8fd5d6201983abecf1844abea);
+            
+        
+
+        poly_line_84440bdb0cdf13a50c9e24df5231bd1c.bindPopup(popup_77990f04bdda15252c80f7e0f728bd22)
+        ;
+
+        
+    
+    
+            var poly_line_a4d7792ba985928d9a36528d8c9c1745 = L.polyline(
+                [[-32.7046222, 151.5399269], [-32.7056951, 151.5400086], [-32.7063022, 151.5400302], [-32.7067132, 151.5399734], [-32.707977, 151.5395635]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_f0fe72658598e2f202b6242d07ff5237 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_938f3e5ea3f9d55f9dfceb6d3c57ecb5 = $(`<div id="html_938f3e5ea3f9d55f9dfceb6d3c57ecb5" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 13</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_346179419_808745696<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 379m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 13                     </div>`)[0];
+                popup_f0fe72658598e2f202b6242d07ff5237.setContent(html_938f3e5ea3f9d55f9dfceb6d3c57ecb5);
+            
+        
+
+        poly_line_a4d7792ba985928d9a36528d8c9c1745.bindPopup(popup_f0fe72658598e2f202b6242d07ff5237)
+        ;
+
+        
+    
+    
+            var poly_line_b6ffeae209e6e5cba3b9ff4b05d50efb = L.polyline(
+                [[-32.7047546, 151.5391055], [-32.7047115, 151.5391861], [-32.7046754, 151.5392853], [-32.7046573, 151.5394028], [-32.7046222, 151.5399269]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_8c242088752531c7674260abe10a483c = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_642427b64bf77b3f5478714d59233974 = $(`<div id="html_642427b64bf77b3f5478714d59233974" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 14</b><br>                     <b>Avery Street</b><br>                     Segment ID: 66954521_808745696_808745702<br>                     OSM ID: 66954521<br>                     Type: tertiary<br>                     Length: 79m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 14                     </div>`)[0];
+                popup_8c242088752531c7674260abe10a483c.setContent(html_642427b64bf77b3f5478714d59233974);
+            
+        
+
+        poly_line_b6ffeae209e6e5cba3b9ff4b05d50efb.bindPopup(popup_8c242088752531c7674260abe10a483c)
+        ;
+
+        
+    
+    
+            var poly_line_5627c7d2823f2fa90b6dd6f4ca9e8c5e = L.polyline(
+                [[-32.7047546, 151.5391055], [-32.7047115, 151.5391861], [-32.7046754, 151.5392853], [-32.7046573, 151.5394028], [-32.7046222, 151.5399269]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_c692e1421dd5ff2f329dac6247c90971 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_17dfd062b55ef3c6115dc59011ef3ac0 = $(`<div id="html_17dfd062b55ef3c6115dc59011ef3ac0" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 15</b><br>                     <b>Avery Street</b><br>                     Segment ID: 66954521_808745696_808745702<br>                     OSM ID: 66954521<br>                     Type: tertiary<br>                     Length: 79m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 15                     </div>`)[0];
+                popup_c692e1421dd5ff2f329dac6247c90971.setContent(html_17dfd062b55ef3c6115dc59011ef3ac0);
+            
+        
+
+        poly_line_5627c7d2823f2fa90b6dd6f4ca9e8c5e.bindPopup(popup_c692e1421dd5ff2f329dac6247c90971)
+        ;
+
+        
+    
+    
+            var poly_line_27787f7d7ef21eea37d1b1dd9165389d = L.polyline(
+                [[-32.7046222, 151.5399269], [-32.7056951, 151.5400086], [-32.7063022, 151.5400302], [-32.7067132, 151.5399734], [-32.707977, 151.5395635]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_945be0bc8d5871f69908a03b49b84a25 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_109a9e31688e04a7f1e720dc775c3e39 = $(`<div id="html_109a9e31688e04a7f1e720dc775c3e39" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 16</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_346179419_808745696<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 379m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 16                     </div>`)[0];
+                popup_945be0bc8d5871f69908a03b49b84a25.setContent(html_109a9e31688e04a7f1e720dc775c3e39);
+            
+        
+
+        poly_line_27787f7d7ef21eea37d1b1dd9165389d.bindPopup(popup_945be0bc8d5871f69908a03b49b84a25)
+        ;
+
+        
+    
+    
+            var poly_line_85d25237c820780d118892429ac17e29 = L.polyline(
+                [[-32.707977, 151.5395635], [-32.70828, 151.5394699]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_69251ced74358b35514a9ee9f498159c = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_4619bc651be3f6adc0fed556c7591be6 = $(`<div id="html_4619bc651be3f6adc0fed556c7591be6" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 17</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_346179419_808746027<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 35m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 17                     </div>`)[0];
+                popup_69251ced74358b35514a9ee9f498159c.setContent(html_4619bc651be3f6adc0fed556c7591be6);
+            
+        
+
+        poly_line_85d25237c820780d118892429ac17e29.bindPopup(popup_69251ced74358b35514a9ee9f498159c)
+        ;
+
+        
+    
+    
+            var poly_line_1bd69a36bef23d7929b71768386ea767 = L.polyline(
+                [[-32.70984, 151.5389416], [-32.70828, 151.5394699]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_6bb69ac63a6b1d753e2d66d042751afc = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_20b9024acbc57eea1ed2f1277bfd984c = $(`<div id="html_20b9024acbc57eea1ed2f1277bfd984c" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 18</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_808745998_808746027<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 180m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 18                     </div>`)[0];
+                popup_6bb69ac63a6b1d753e2d66d042751afc.setContent(html_20b9024acbc57eea1ed2f1277bfd984c);
+            
+        
+
+        poly_line_1bd69a36bef23d7929b71768386ea767.bindPopup(popup_6bb69ac63a6b1d753e2d66d042751afc)
+        ;
+
+        
+    
+    
+            var poly_line_d78feaadf394c35cdbbfb37eec92b8eb = L.polyline(
+                [[-32.7103188, 151.5387815], [-32.70984, 151.5389416]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_2faa67b5ebae792fc433a1f09f7877b1 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_367d349a1ca25bd8f097fecab5383b64 = $(`<div id="html_367d349a1ca25bd8f097fecab5383b64" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 19</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_346174964_808745998<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 55m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 19                     </div>`)[0];
+                popup_2faa67b5ebae792fc433a1f09f7877b1.setContent(html_367d349a1ca25bd8f097fecab5383b64);
+            
+        
+
+        poly_line_d78feaadf394c35cdbbfb37eec92b8eb.bindPopup(popup_2faa67b5ebae792fc433a1f09f7877b1)
+        ;
+
+        
+    
+    
+            var poly_line_d683c13a7752b6d3c91a22e25bc0e24b = L.polyline(
+                [[-32.7149202, 151.5375426], [-32.7144819, 151.5378163], [-32.7141124, 151.538047], [-32.7125984, 151.538347], [-32.7103188, 151.5387815]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_ea2ef67aadc045daf7d97de024b1070a = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_ff95f7320bffd0dea611b129f5678570 = $(`<div id="html_ff95f7320bffd0dea611b129f5678570" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 20</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 31133793_346174964_6272833017<br>                     OSM ID: 31133793<br>                     Type: secondary<br>                     Length: 529m<br>                     Direction: Forward<br>                     Coordinates: 5 points<br>                     Order in route: 20                     </div>`)[0];
+                popup_ea2ef67aadc045daf7d97de024b1070a.setContent(html_ff95f7320bffd0dea611b129f5678570);
+            
+        
+
+        poly_line_d683c13a7752b6d3c91a22e25bc0e24b.bindPopup(popup_ea2ef67aadc045daf7d97de024b1070a)
+        ;
+
+        
+    
+    
+            var poly_line_056e9005c8afb0c424d9c363aa6dea08 = L.polyline(
+                [[-32.7151422, 151.5373427], [-32.7150634, 151.5374137], [-32.7149202, 151.5375426]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_9dbc378cfc8390f6e967a0b4eab0c6fa = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_edbcd563c2078fea4edae1216df06524 = $(`<div id="html_edbcd563c2078fea4edae1216df06524" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 21</b><br>                     <b>Aberglasslyn Road</b><br>                     Segment ID: 669796066_6272833016_6272833017<br>                     OSM ID: 669796066<br>                     Type: secondary<br>                     Length: 31m<br>                     Direction: Forward<br>                     Coordinates: 3 points<br>                     Order in route: 21                     </div>`)[0];
+                popup_9dbc378cfc8390f6e967a0b4eab0c6fa.setContent(html_edbcd563c2078fea4edae1216df06524);
+            
+        
+
+        poly_line_056e9005c8afb0c424d9c363aa6dea08.bindPopup(popup_9dbc378cfc8390f6e967a0b4eab0c6fa)
+        ;
+
+        
+    
+    
+            var poly_line_d44389b2dc7be39514ed3a8b8e3f2df2 = L.polyline(
+                [[-32.7151501, 151.5373098], [-32.7151422, 151.5373427]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_dc24274e3016a2d0fab9b376e0305afb = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_61f5ed038478e21192323e9c3aa765e3 = $(`<div id="html_61f5ed038478e21192323e9c3aa765e3" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 22</b><br>                     <b>Unnamed Road</b><br>                     Segment ID: 31132964_346174575_6272833016<br>                     OSM ID: 31132964<br>                     Type: secondary<br>                     Length: 3m<br>                     Direction: Forward<br>                     Coordinates: 2 points<br>                     Order in route: 22                     </div>`)[0];
+                popup_dc24274e3016a2d0fab9b376e0305afb.setContent(html_61f5ed038478e21192323e9c3aa765e3);
+            
+        
+
+        poly_line_d44389b2dc7be39514ed3a8b8e3f2df2.bindPopup(popup_dc24274e3016a2d0fab9b376e0305afb)
+        ;
+
+        
+    
+    
+            var poly_line_d34040b6a2a7e66eaaf62df0dbf37de2 = L.polyline(
+                [[-32.7149002, 151.5365656], [-32.7149175, 151.5366561], [-32.7149317, 151.5367305], [-32.7149554, 151.536815], [-32.7149971, 151.536925], [-32.7150383, 151.537019], [-32.7150814, 151.5371034], [-32.7151213, 151.5371798], [-32.7151259, 151.5371947], [-32.7151384, 151.5372353], [-32.7151501, 151.5373098]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_82358b61ccf6c7df4011ca92d9ae6ad4 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_811141bec2b1221b6e31e2167a49a1b0 = $(`<div id="html_811141bec2b1221b6e31e2167a49a1b0" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 23</b><br>                     <b>Alexandra Avenue</b><br>                     Segment ID: 31132970_346174575_346174690<br>                     OSM ID: 31132970<br>                     Type: secondary<br>                     Length: 76m<br>                     Direction: Forward<br>                     Coordinates: 11 points<br>                     Order in route: 23                     </div>`)[0];
+                popup_82358b61ccf6c7df4011ca92d9ae6ad4.setContent(html_811141bec2b1221b6e31e2167a49a1b0);
+            
+        
+
+        poly_line_d34040b6a2a7e66eaaf62df0dbf37de2.bindPopup(popup_82358b61ccf6c7df4011ca92d9ae6ad4)
+        ;
+
+        
+    
+    
+            var poly_line_9363ed39bf57b3e28d6a1e093dc4af69 = L.polyline(
+                [[-32.7142493, 151.5368252], [-32.7145142, 151.5366366], [-32.7145469, 151.5366232], [-32.7145852, 151.5366125], [-32.7148331, 151.5365756], [-32.7149002, 151.5365656]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_4f10ab5b10021e2c4b30b12421ede06b = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_baedcd9497a82d0d88c5d75d705f98e0 = $(`<div id="html_baedcd9497a82d0d88c5d75d705f98e0" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 24</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346174690_346176268<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 78m<br>                     Direction: Forward<br>                     Coordinates: 6 points<br>                     Order in route: 24                     </div>`)[0];
+                popup_4f10ab5b10021e2c4b30b12421ede06b.setContent(html_baedcd9497a82d0d88c5d75d705f98e0);
+            
+        
+
+        poly_line_9363ed39bf57b3e28d6a1e093dc4af69.bindPopup(popup_4f10ab5b10021e2c4b30b12421ede06b)
+        ;
+
+        
+    
+    
+            var poly_line_bbe7f3084e893e12bb12f72f4b3a2f84 = L.polyline(
+                [[-32.7133727, 151.537196], [-32.7136532, 151.5371543], [-32.7138451, 151.5371087], [-32.7138995, 151.5370856], [-32.7139444, 151.5370591], [-32.7142493, 151.5368252]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_ef0ded6538edd73b8ccba28c3b281ac1 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_af1a78fefbaf4875c8a7ca3b2fb07c69 = $(`<div id="html_af1a78fefbaf4875c8a7ca3b2fb07c69" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 25</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176268_346176270<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 106m<br>                     Direction: Forward<br>                     Coordinates: 6 points<br>                     Order in route: 25                     </div>`)[0];
+                popup_ef0ded6538edd73b8ccba28c3b281ac1.setContent(html_af1a78fefbaf4875c8a7ca3b2fb07c69);
+            
+        
+
+        poly_line_bbe7f3084e893e12bb12f72f4b3a2f84.bindPopup(popup_ef0ded6538edd73b8ccba28c3b281ac1)
+        ;
+
+        
+    
+    
+            var poly_line_1470340d3b1c63fc13be0e18b125f0d4 = L.polyline(
+                [[-32.7124757, 151.537086], [-32.7125948, 151.5370555], [-32.7126968, 151.5370524], [-32.7127799, 151.5370685], [-32.7128724, 151.5370899], [-32.7130978, 151.5371808], [-32.7132064, 151.5372053], [-32.7132906, 151.5372089], [-32.7133727, 151.537196]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_0a87185e2bda5cd9c7a86555e0dd1c76 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_cc9df80b2b4ee8606d63e9357712c26c = $(`<div id="html_cc9df80b2b4ee8606d63e9357712c26c" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 26</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176270_346176273<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 102m<br>                     Direction: Forward<br>                     Coordinates: 9 points<br>                     Order in route: 26                     </div>`)[0];
+                popup_0a87185e2bda5cd9c7a86555e0dd1c76.setContent(html_cc9df80b2b4ee8606d63e9357712c26c);
+            
+        
+
+        poly_line_1470340d3b1c63fc13be0e18b125f0d4.bindPopup(popup_0a87185e2bda5cd9c7a86555e0dd1c76)
+        ;
+
+        
+    
+    
+            var poly_line_42fbf613d4359a47be3e467df2ab68fe = L.polyline(
+                [[-32.711893, 151.5371054], [-32.7119523, 151.5371288], [-32.712021, 151.5371456], [-32.7120869, 151.5371536], [-32.7121621, 151.5371543], [-32.7122292, 151.5371436], [-32.7124757, 151.537086]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_b607b6cafa3216657bd44d327e0bb3a0 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_1d226336a37d0aadabcf8b9d39272dfd = $(`<div id="html_1d226336a37d0aadabcf8b9d39272dfd" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 27</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176273_6272833061<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 66m<br>                     Direction: Forward<br>                     Coordinates: 7 points<br>                     Order in route: 27                     </div>`)[0];
+                popup_b607b6cafa3216657bd44d327e0bb3a0.setContent(html_1d226336a37d0aadabcf8b9d39272dfd);
+            
+        
+
+        poly_line_42fbf613d4359a47be3e467df2ab68fe.bindPopup(popup_b607b6cafa3216657bd44d327e0bb3a0)
+        ;
+
+        
+    
+    
+            var poly_line_86bc7d1ff0a3cc416ca3c093231e37ca = L.polyline(
+                [[-32.711893, 151.5371054], [-32.7118191, 151.5370805], [-32.7116977, 151.5370256], [-32.7116232, 151.5369746], [-32.7114946, 151.5368821], [-32.711382, 151.5368157], [-32.7112599, 151.5367614], [-32.7111504, 151.5367399], [-32.7110151, 151.5367382], [-32.710909, 151.5367453], [-32.7108153, 151.5367681], [-32.7107217, 151.536807], [-32.7106438, 151.5368459], [-32.7103414, 151.5370335]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_17c2bdd906a104a2d58c86b5378b38e4 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_c8e078feb970738702094b2cff1ce29f = $(`<div id="html_c8e078feb970738702094b2cff1ce29f" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 28</b><br>                     <b>Endeavour Street</b><br>                     Segment ID: 31133077_346176290_6272833061<br>                     OSM ID: 31133077<br>                     Type: residential<br>                     Length: 186m<br>                     Direction: Forward<br>                     Coordinates: 14 points<br>                     Order in route: 28                     </div>`)[0];
+                popup_17c2bdd906a104a2d58c86b5378b38e4.setContent(html_c8e078feb970738702094b2cff1ce29f);
+            
+        
+
+        poly_line_86bc7d1ff0a3cc416ca3c093231e37ca.bindPopup(popup_17c2bdd906a104a2d58c86b5378b38e4)
+        ;
+
+        
+    
+    
+            var poly_line_1e51dd52a2c4ed09722e482c888e3048 = L.polyline(
+                [[-32.7106458, 151.5376097], [-32.7104908, 151.5373452], [-32.7103414, 151.5370335]],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "green", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+        var popup_e4ac9fcdeb8576ce1e1cfce429c5df31 = L.popup({
+  "maxWidth": 400,
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_d1885d4c0e74831aee0a03031d027c5c = $(`<div id="html_d1885d4c0e74831aee0a03031d027c5c" style="width: 100.0%; height: 100.0%;">                     <b>Route 38 - Segment 29</b><br>                     <b>Ford Close</b><br>                     Segment ID: 31133078_346176290_346176330<br>                     OSM ID: 31133078<br>                     Type: residential<br>                     Length: 64m<br>                     Direction: Forward<br>                     Coordinates: 3 points<br>                     Order in route: 29                     </div>`)[0];
+                popup_e4ac9fcdeb8576ce1e1cfce429c5df31.setContent(html_d1885d4c0e74831aee0a03031d027c5c);
+            
+        
+
+        poly_line_1e51dd52a2c4ed09722e482c888e3048.bindPopup(popup_e4ac9fcdeb8576ce1e1cfce429c5df31)
+        ;
+
+        
+    
+    
+            var marker_45b346a86bbb3e48d7c39f6fddd3a093 = L.marker(
+                [-32.7106458, 151.5376097],
+                {
+  "draggable": null,
+  "autoPan": null,
+}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+            var icon_68fdf81e7f3bb8fe8572ce054eb8add7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "play",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+            marker_45b346a86bbb3e48d7c39f6fddd3a093.setIcon(icon_68fdf81e7f3bb8fe8572ce054eb8add7);
+        
+    
+        var popup_754632337972e35e709c721b5d3fbabd = L.popup({
+  "maxWidth": "100%",
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_91395b7e11abe6de898a97aecbeed95f = $(`<div id="html_91395b7e11abe6de898a97aecbeed95f" style="width: 100.0%; height: 100.0%;">Route Start</div>`)[0];
+                popup_754632337972e35e709c721b5d3fbabd.setContent(html_91395b7e11abe6de898a97aecbeed95f);
+            
+        
+
+        marker_45b346a86bbb3e48d7c39f6fddd3a093.bindPopup(popup_754632337972e35e709c721b5d3fbabd)
+        ;
+
+        
+    
+    
+            var marker_bfbfd8daf05a3dda94220987bcdd78b0 = L.marker(
+                [-32.7103414, 151.5370335],
+                {
+  "draggable": null,
+  "autoPan": null,
+}
+            ).addTo(map_dbddb6204db012f1257fad50ba9d68d5);
+        
+    
+            var icon_4da77701ad1e1b19aaed061b6d29f6b0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "stop",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+            marker_bfbfd8daf05a3dda94220987bcdd78b0.setIcon(icon_4da77701ad1e1b19aaed061b6d29f6b0);
+        
+    
+        var popup_e93b6e3562cfdb9c82e8a5f971d45fce = L.popup({
+  "maxWidth": "100%",
+  "autoClose": null,
+  "closeOnClick": null,
+});
+
+        
+            
+                var html_0902e80a8302fd6ddd6a00cc1b1d653f = $(`<div id="html_0902e80a8302fd6ddd6a00cc1b1d653f" style="width: 100.0%; height: 100.0%;">Route End</div>`)[0];
+                popup_e93b6e3562cfdb9c82e8a5f971d45fce.setContent(html_0902e80a8302fd6ddd6a00cc1b1d653f);
+            
+        
+
+        marker_bfbfd8daf05a3dda94220987bcdd78b0.bindPopup(popup_e93b6e3562cfdb9c82e8a5f971d45fce)
+        ;
+
+        
+    
+</script>
+</html>
