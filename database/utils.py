@@ -558,9 +558,98 @@ def reset_segment_run_status(db, user_id, segment_id):
     
     return segment
 
+def get_location_cleanup_stats(db, location_id):
+    """
+    Get statistics about what will be cleaned up when removing a location.
+    
+    Args:
+        db: SQLAlchemy session
+        location_id: ID of the location to analyze
+        
+    Returns:
+        dict: Statistics about routes, segments, and user segments that will be affected
+    """
+    try:
+        # Get the location
+        location = db.query(Location).filter(Location.id == location_id).first()
+        if not location:
+            return None
+        
+        user_id = location.user_id
+        
+        # Count routes for this location
+        route_count = db.query(Route).filter(Route.location_id == location_id).count()
+        
+        # Count route segments for this location
+        route_segment_count = (
+            db.query(route_segments)
+            .join(Route)
+            .filter(Route.location_id == location_id)
+            .count()
+        )
+        
+        # Get all road segments used by this location
+        location_segments = (
+            db.query(RoadSegment.segment_id)
+            .join(route_segments)
+            .join(Route)
+            .filter(Route.location_id == location_id)
+            .distinct()
+            .all()
+        )
+        location_segment_ids = {segment.segment_id for segment in location_segments}
+        
+        # Get all road segments used by the user's remaining locations (excluding this one)
+        remaining_location_segments = (
+            db.query(RoadSegment.segment_id)
+            .join(route_segments)
+            .join(Route)
+            .join(Location)
+            .filter(
+                Location.user_id == user_id,
+                Location.id != location_id
+            )
+            .distinct()
+            .all()
+        )
+        remaining_segment_ids = {segment.segment_id for segment in remaining_location_segments}
+        
+        # Find user road segments that will become unused
+        unused_user_segments = []
+        if location_segment_ids:  # Only query if there are segments to check
+            unused_user_segments = (
+                db.query(UserRoadSegment)
+                .filter(
+                    UserRoadSegment.user_id == user_id,
+                    UserRoadSegment.segment_id.in_(location_segment_ids),
+                    ~UserRoadSegment.segment_id.in_(remaining_segment_ids)
+                )
+                .all()
+            )
+        
+        return {
+            'location_name': location.name,
+            'route_count': route_count,
+            'route_segment_count': route_segment_count,
+            'unique_segments_used': len(location_segment_ids),
+            'unused_user_segments': len(unused_user_segments),
+            'unused_user_segments_details': [
+                {
+                    'segment_id': seg.segment_id,
+                    'name': seg.name,
+                    'has_been_run': seg.has_been_run
+                }
+                for seg in unused_user_segments
+            ]
+        }
+        
+    except Exception as e:
+        logging.error(f"Error getting location cleanup stats: {str(e)}")
+        return None
+
 def remove_location(db, location_id):
     """
-    Remove a location and its associated routes.
+    Remove a location and its associated routes, and clean up unused user road segments.
     
     Args:
         db: SQLAlchemy session
@@ -573,23 +662,81 @@ def remove_location(db, location_id):
         # Get the location
         location = db.query(Location).filter(Location.id == location_id).first()
         if not location:
+            logging.error(f"Location with ID {location_id} not found")
             return False
-            
+        
+        user_id = location.user_id
+        
         # Get all routes for this location
         routes = db.query(Route).filter(Route.location_id == location_id).all()
         
         # Delete route segments first
         for route in routes:
-            # Delete entries from route_segments association table
-            db.execute(
-                route_segments.delete().where(route_segments.c.route_id == route.id)
-            )
+            try:
+                # Delete entries from route_segments association table
+                result = db.execute(
+                    route_segments.delete().where(route_segments.c.route_id == route.id)
+                )
+                logging.info(f"Deleted {result.rowcount} route segments for route {route.id}")
+            except Exception as e:
+                logging.warning(f"Error deleting route segments for route {route.id}: {str(e)}")
         
         # Now delete the routes
-        db.query(Route).filter(Route.location_id == location_id).delete()
+        try:
+            deleted_routes = db.query(Route).filter(Route.location_id == location_id).delete()
+            logging.info(f"Deleted {deleted_routes} routes for location {location_id}")
+        except Exception as e:
+            logging.error(f"Error deleting routes for location {location_id}: {str(e)}")
+            raise
         
         # Finally delete the location
-        db.delete(location)
+        try:
+            db.delete(location)
+            logging.info(f"Deleted location {location_id} ({location.name})")
+        except Exception as e:
+            logging.error(f"Error deleting location {location_id}: {str(e)}")
+            raise
+        
+        # Clean up unused user road segments
+        try:
+            # Get all road segments that are still used by the user's remaining locations
+            remaining_location_segments = (
+                db.query(RoadSegment.segment_id)
+                .join(route_segments)
+                .join(Route)
+                .join(Location)
+                .filter(Location.user_id == user_id)
+                .distinct()
+                .all()
+            )
+            
+            # Convert to set for efficient lookup
+            remaining_segment_ids = {segment.segment_id for segment in remaining_location_segments}
+            
+            # Find user road segments that are no longer used
+            unused_user_segments = (
+                db.query(UserRoadSegment)
+                .filter(
+                    UserRoadSegment.user_id == user_id,
+                    ~UserRoadSegment.segment_id.in_(remaining_segment_ids)
+                )
+                .all()
+            )
+            
+            # Delete unused user road segments
+            deleted_user_segments = 0
+            for unused_segment in unused_user_segments:
+                try:
+                    db.delete(unused_segment)
+                    deleted_user_segments += 1
+                except Exception as e:
+                    logging.warning(f"Error deleting user segment {unused_segment.segment_id}: {str(e)}")
+            
+            logging.info(f"Cleaned up {deleted_user_segments} unused user road segments")
+            
+        except Exception as e:
+            logging.error(f"Error cleaning up user road segments: {str(e)}")
+            # Don't raise here - we still want to commit the location removal
         
         db.commit()
         return True

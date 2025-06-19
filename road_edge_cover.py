@@ -4,7 +4,7 @@ import folium
 import gpxpy
 import os
 from geopy.distance import geodesic
-from visualization import visualize_solution, visualize_road_network, visualize_classification
+from visualization import visualize_solution
 from metrics import print_metrics
 from graph_processing import (
     get_coordinates,
@@ -32,7 +32,8 @@ from database.utils import (
     get_activity_by_id,
     get_user_road_segments,
     get_user_activities,
-    get_activity_gps_points
+    get_activity_gps_points,
+    get_location_cleanup_stats
 )
 from database.models import User, RoadSegment, Route, route_segments, Location
 from datetime import datetime, timezone
@@ -295,13 +296,18 @@ def store_road_segments(db, G, location_id):
     """Store road segments from the network graph"""
     print("Storing road segments...")
     segments_added = 0
-    segments_updated = 0
     segments_skipped = 0
-    bidirectional_count = 0
     error_count = 0
     
-    # Track processed OSM IDs to handle bidirectional roads
-    processed_osm_ids = set()
+    # First, delete all existing routes for this location
+    existing_routes = db.query(Route).filter(Route.location_id == location_id).all()
+    for route in existing_routes:
+        # Delete route segments first
+        db.execute(
+            route_segments.delete().where(route_segments.c.route_id == route.id)
+        )
+        # Delete the route
+        db.delete(route)
     
     total_edges = len(G.edges())
     print(f"Total edges in graph: {total_edges}")
@@ -332,18 +338,7 @@ def store_road_segments(db, G, location_id):
                 node_u = v_str
                 node_v = u_str
             
-            # Note: No longer skipping bidirectional roads since composite IDs make each direction unique
-            
-            # Check if this is a bidirectional road we've already processed
-            # OSM IDs are the same for both directions of the same road
-            # NOTE: Disabled because composite IDs make each direction unique
-            # if osm_id in processed_osm_ids:
-            #     bidirectional_count += 1
-            #     continue
-            #     
-            # processed_osm_ids.add(osm_id)
-            
-            # Check if segment already exists (now using segment_id as unique identifier)
+            # Check if segment already exists
             existing_segment = (
                 db.query(RoadSegment)
                 .filter(RoadSegment.segment_id == segment_id)
@@ -351,20 +346,9 @@ def store_road_segments(db, G, location_id):
             )
             
             if existing_segment:
-                # Update existing segment if needed
-                if (existing_segment.name != name or 
-                    existing_segment.road_type != road_type or 
-                    abs(existing_segment.length - length) > 0.01):  # Use small threshold for float comparison
-                    
-                    existing_segment.name = name
-                    existing_segment.road_type = road_type
-                    existing_segment.length = length
-                    existing_segment.last_updated = datetime.utcnow()
-                    segments_updated += 1
-                else:
-                    segments_skipped += 1
+                segments_skipped += 1
             else:
-                # Create new segment with all the new fields
+                # Create new segment
                 segment = add_road_segment(
                     db,
                     osm_id,           # Original OSM ID
@@ -391,13 +375,11 @@ def store_road_segments(db, G, location_id):
         db.commit()
         print("\nRoad segment processing summary:")
         print(f"Total edges in graph: {total_edges}")
-        print(f"Bidirectional edges skipped: {bidirectional_count} (disabled - using composite IDs)")
         print(f"New segments added: {segments_added}")
-        print(f"Existing segments updated: {segments_updated}")
-        print(f"Unchanged segments skipped: {segments_skipped}")
+        print(f"Existing segments reused: {segments_skipped}")
         print(f"Errors encountered: {error_count}")
-        print(f"Total unique segments: {segments_added + segments_updated + segments_skipped}")
-        return segments_added + segments_updated
+        print(f"Total segments: {segments_added + segments_skipped}")
+        return segments_added + segments_skipped
         
     except Exception as e:
         db.rollback()
@@ -417,13 +399,11 @@ def process_location_routes(db, location):
         print("Retrieving road network...")
         G = get_road_network(center_point, distance)
         
-        
         # Store road segments first
         num_segments = store_road_segments(db, G, location.id)
         if num_segments == 0:
             print("Warning: No road segments were stored")
             return False
-        
         
         # Find nearest node to start point
         start_node = ox.nearest_nodes(G, center_point[1], center_point[0])
@@ -490,15 +470,10 @@ def process_location_routes(db, location):
         except Exception as e:
             print(f"Warning: Failed to export cycles data: {str(e)}")
         
-        # Visualize the initial solution before storing routes
-        #print("\nVisualizing initial solution...")
-        #metrics = calculate_solution_metrics(G, cycles, start_node, max_distance)
-        #visualize_solution(G, cycles, center_point, metrics, output_file='initial_solution.html')
-        #print("Initial solution saved to 'initial_solution.html'")
-        
         # Store each cycle as a route
         print("\nStoring routes...")
         routes_created = 0
+        created_routes = []  # Keep track of created routes
         
         for i, cycle in enumerate(cycles, 1):
             # Get the road segments for this cycle
@@ -572,6 +547,7 @@ def process_location_routes(db, location):
                         # Update the route with node count for debugging
                         route.node_count = len(cycle)
                         routes_created += 1
+                        created_routes.append(route)  # Add to our list of created routes
                         print(f"    ✓ Created route with {len(segment_ids)} segments (from {len(cycle)} nodes)")
                         db.commit()  # Commit after each successful route creation
                     else:
@@ -608,7 +584,7 @@ def process_location_routes(db, location):
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
                 
-                for route in routes:
+                for route in created_routes:  # Use our list of created routes
                     segments = (
                         db.query(RoadSegment, route_segments.c.direction, route_segments.c.segment_order)
                         .join(route_segments)
@@ -702,14 +678,50 @@ def remove_user_location(db, user):
             if 0 <= index < len(user.locations):
                 location = user.locations[index]
                 
-                # Confirm deletion
-                confirm = input(f"\nAre you sure you want to remove '{location.name}'? This will also remove all routes for this location. (y/n): ")
+                # Get cleanup statistics
+                cleanup_stats = get_location_cleanup_stats(db, location.id)
+                
+                # Confirm deletion with detailed information
+                print(f"\nAre you sure you want to remove '{location.name}'?")
+                print("This will remove:")
+                print(f"  - {cleanup_stats['route_count']} routes")
+                print(f"  - {cleanup_stats['route_segment_count']} route segments")
+                print(f"  - {cleanup_stats['unique_segments_used']} unique road segments")
+                
+                if cleanup_stats['unused_user_segments'] > 0:
+                    print(f"  - {cleanup_stats['unused_user_segments']} user road segments (no longer used by other locations)")
+                    
+                    # Show details of segments that will be removed
+                    run_segments = sum(1 for seg in cleanup_stats['unused_user_segments_details'] if seg['has_been_run'])
+                    if run_segments > 0:
+                        print(f"    ⚠️  Warning: {run_segments} of these segments have been marked as 'run'")
+                        print("    This will remove your running progress for these segments!")
+                    
+                    # Show a few examples
+                    print("    Examples of segments to be removed:")
+                    for i, seg in enumerate(cleanup_stats['unused_user_segments_details'][:3]):
+                        status = "✅ Run" if seg['has_been_run'] else "❌ Not Run"
+                        print(f"      - {seg['name'] or 'Unnamed'} ({status})")
+                    
+                    if len(cleanup_stats['unused_user_segments_details']) > 3:
+                        print(f"      ... and {len(cleanup_stats['unused_user_segments_details']) - 3} more")
+                else:
+                    print("  - No user road segments (all segments are used by other locations)")
+                
+                confirm = input("\nContinue? (y/n): ")
                 if confirm.lower() == 'y':
                     if remove_location(db, location.id):
-                        print(f"\nLocation '{location.name}' has been removed.")
+                        print(f"\n✅ Location '{location.name}' has been removed successfully!")
+                        print(f"📊 Cleanup summary:")
+                        print(f"  - Removed {cleanup_stats['route_count']} routes")
+                        print(f"  - Removed {cleanup_stats['route_segment_count']} route segments")
+                        if cleanup_stats['unused_user_segments'] > 0:
+                            print(f"  - Cleaned up {cleanup_stats['unused_user_segments']} unused user road segments")
+                        else:
+                            print(f"  - No user road segments needed cleanup")
                         db.refresh(user)
                     else:
-                        print("\nFailed to remove location.")
+                        print("\n❌ Failed to remove location.")
                 return
                 
         except ValueError:
